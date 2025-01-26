@@ -21,7 +21,7 @@ class my_dataset(Dataset):
         with open(txt_path, 'r') as f:
             data = f.readlines()
 
-        i = 0
+        # i = 0
         for line in data:
             line = line.replace('\\', os.sep)
             line = line.strip()
@@ -31,9 +31,9 @@ class my_dataset(Dataset):
             images.append(image_path)
             labels.append(contents[-1])
 
-            i += 1
-            if i == 4:
-                break
+            # i += 1
+            # if i == 4:
+            #     break
 
         return images, labels
 
