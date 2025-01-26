@@ -65,7 +65,7 @@ def get_parser(**parser_kwargs):
         "--train",
         type=str2bool,
         const=True,
-        default=False,
+        default=True,
         nargs="?",
         help="train",
     )
