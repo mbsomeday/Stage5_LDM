@@ -696,32 +696,33 @@ if __name__ == "__main__":
             print(f"Setting learning rate to {model.learning_rate:.2e}")
 
 
-        # allow checkpointing via USR1
-        def melk(*args, **kwargs):
-            # run all checkpoint hooks
-            if trainer.global_rank == 0:
-                print("Summoning checkpoint.")
-                ckpt_path = os.path.join(ckptdir, "last.ckpt")
-                trainer.save_checkpoint(ckpt_path)
-
-
-        def divein(*args, **kwargs):
-            if trainer.global_rank == 0:
-                import pudb;
-                pudb.set_trace()
-
-
-        import signal
-
-        signal.signal(signal.SIGUSR1, melk)
-        signal.signal(signal.SIGUSR2, divein)
+        # # allow checkpointing via USR1
+        # def melk(*args, **kwargs):
+        #     # run all checkpoint hooks
+        #     if trainer.global_rank == 0:
+        #         print("Summoning checkpoint.")
+        #         ckpt_path = os.path.join(ckptdir, "last.ckpt")
+        #         trainer.save_checkpoint(ckpt_path)
+        #
+        #
+        # def divein(*args, **kwargs):
+        #     if trainer.global_rank == 0:
+        #         import pudb;
+        #         pudb.set_trace()
+        #
+        #
+        # import signal
+        #
+        # signal.signal(signal.SIGUSR1, melk)
+        # signal.signal(signal.SIGUSR2, divein)
 
         # run
         if opt.train:
             try:
                 trainer.fit(model, data)
             except Exception:
-                melk()
+                # melk()
+                print('Exception in Flag A')
                 raise
         if not opt.no_test and not trainer.interrupted:
             trainer.test(model, data)
