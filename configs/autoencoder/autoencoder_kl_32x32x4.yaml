@@ -26,9 +26,9 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 8
+    batch_size: 4
     wrap: True
-    num_workers: 4
+    num_workers: 2
     train:
       target: ldm.data.ww_dataset.my_dataset
       params:
