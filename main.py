@@ -630,7 +630,7 @@ if __name__ == "__main__":
             "early_stop_callback": {
                 "target": "main.EarlyStopping",
                 "params": {
-                    'monitor': "val_accuracy",
+                    'monitor': "val/rec_loss",
                     'min_delta': 1e-9,
                     'patience': 10,
                     'mode': 'min'
