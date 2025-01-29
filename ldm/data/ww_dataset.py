@@ -7,6 +7,10 @@ import numpy as np
 
 class my_dataset(Dataset):
     def __init__(self, ds_dir, txt_name):
+        # # 先判断是否是D4，是的话需要单独处理
+        # ds_name = ds_dir.split(os.sep)[-1][:2]
+        # self.D4_flag = True if ds_name == 'D4' else False
+
         self.ds_dir = ds_dir.replace('\\', os.sep)
         self.txt_name = txt_name
         self.img_transforms = transforms.Compose([
@@ -21,7 +25,6 @@ class my_dataset(Dataset):
         with open(txt_path, 'r') as f:
             data = f.readlines()
 
-        # i = 0
         for line in data:
             line = line.replace('\\', os.sep)
             line = line.strip()
@@ -30,10 +33,6 @@ class my_dataset(Dataset):
             image_path = os.path.join(self.ds_dir, contents[0])
             images.append(image_path)
             labels.append(contents[-1])
-
-            # i += 1
-            # if i == 4:
-            #     break
 
         return images, labels
 
@@ -54,10 +53,6 @@ class my_dataset(Dataset):
         }
 
         return image_dict
-
-
-
-
 
 
 
