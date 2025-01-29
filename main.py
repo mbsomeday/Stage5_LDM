@@ -632,7 +632,7 @@ if __name__ == "__main__":
                 "params": {
                     'monitor': "val/rec_loss",
                     'min_delta': 1e-9,
-                    'patience': 10,
+                    'patience': 5,
                     'mode': 'min'
                 }
             },
