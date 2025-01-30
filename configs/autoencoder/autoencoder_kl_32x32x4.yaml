@@ -33,15 +33,15 @@ data:
       target: ldm.data.ww_dataset.my_dataset
       params:
 #        ds_dir: 'D:\my_phd\dataset\Stage3\D2_CityPersons'
-        ds_dir: '/kaggle/input/stage4-d4-7augs'
-#        ds_dir: '/veracruz/home/j/jwang/data/Stage4_D1_ECPDaytime_7Augs'
+#        ds_dir: '/kaggle/input/stage4-d4-7augs'
+        ds_dir: '/tormenta/s/ssesaai/data/Stage4_D4_BDD100K_7Augs'
         txt_name: 'augmentation_train.txt'
     validation:
       target: ldm.data.ww_dataset.my_dataset
       params:
 #        ds_dir: 'D:\my_phd\dataset\Stage3\D2_CityPersons'
-        ds_dir: '/kaggle/input/stage4-d4-7augs'
-        #        ds_dir: '/veracruz/home/j/jwang/data/Stage4_D1_ECPDaytime_7Augs'
+#        ds_dir: '/kaggle/input/stage4-d4-7augs'
+        ds_dir: '/tormenta/s/ssesaai/data/Stage4_D4_BDD100K_7Augs'
         txt_name: 'val.txt'
 
 lightning:
