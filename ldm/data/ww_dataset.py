@@ -24,8 +24,8 @@ class my_dataset(Dataset):
         txt_path = os.path.join(self.ds_dir, 'dataset_txt', self.txt_name)
         with open(txt_path, 'r') as f:
             data = f.readlines()
-
-        for line in data:
+        from tqdm import tqdm
+        for line in tqdm(data):
             line = line.replace('\\', os.sep)
             line = line.strip()
             contents = line.split()
