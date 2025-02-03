@@ -267,7 +267,9 @@ augTrain_loader = DataLoader(augTrain_data, batch_size=8)
 
 saved_tensor = None
 
-for idx, image_dict in enumerate(augTrain_loader):
+from tqdm import tqdm
+
+for idx, image_dict in enumerate(tqdm(augTrain_loader)):
     image = image_dict['image']
     image = image.to('cuda')
     latent_space = model.encoder(image).detach()
