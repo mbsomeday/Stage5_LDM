@@ -536,8 +536,8 @@ if __name__ == "__main__":
         trainer_opt = argparse.Namespace(**trainer_config)
         lightning_config.trainer = trainer_config
 
-        # model
-        model = instantiate_from_config(config.model)
+        # # model
+        # model = instantiate_from_config(config.model)
 
 
 
