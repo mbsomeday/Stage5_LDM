@@ -28,6 +28,7 @@ model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
                       )
+model.to('cuda')
 torch.save(model.state_dict(), r'test.pth')
 # model.eval()
 # x = torch.rand((1, 3, 224, 224))
