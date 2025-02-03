@@ -271,16 +271,16 @@ for idx, image_dict in enumerate(augTrain_loader):
     image = image_dict['image']
     image = image.to('cuda')
     latent_space = model.encoder(image).detach()
-    print('laten size:', latent_space.size())
+    # print('laten size:', latent_space.size())
 
     if saved_tensor is None:
         saved_tensor = latent_space
     else:
         saved_tensor = torch.cat((saved_tensor, latent_space), 0)
-        print('拼接的：', saved_tensor.size())
-    if idx == 3:
-        torch.save(saved_tensor, 'test_save_tensor.pt')
-        break
+        # print('拼接的：', saved_tensor.size())
+    # if idx == 3:
+    #     torch.save(saved_tensor, 'test_save_tensor.pt')
+    #     break
 
 
 print('读取保存的tensor')
