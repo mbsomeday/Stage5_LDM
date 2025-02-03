@@ -539,11 +539,11 @@ if __name__ == "__main__":
         # model
         model = instantiate_from_config(config.model)
 
-
         from torch.utils.data import DataLoader
+        from ldm.data.ww_dataset import my_dataset
 
-        data = instantiate_from_config(config.data)
-        loader = DataLoader(data, batch_size=4)
+        test_dataset = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
+        loader = DataLoader(test_dataset, batch_size=4)
         for image_dict, _ in loader:
             # image = image_dict['image']
         #     print(image.shape)
