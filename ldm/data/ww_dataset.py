@@ -34,13 +34,13 @@ class my_dataset(Dataset):
             images.append(image_path)
             labels.append(contents[-1])
 
-        # 只从数据集中取100个
-        random.seed(13)
-        random.shuffle(images)
-        random.shuffle(labels)
-
-        images = images[:100]
-        labels = labels[:100]
+        # # 只从数据集中取100个
+        # random.seed(13)
+        # random.shuffle(images)
+        # random.shuffle(labels)
+        #
+        # images = images[:100]
+        # labels = labels[:100]
 
         return images, labels
 
