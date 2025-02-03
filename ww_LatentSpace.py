@@ -216,6 +216,7 @@ data = instantiate_from_config(config.data)
 # NOTE according to https://pytorch-lightning.readthedocs.io/en/latest/datamodules.html
 # calling these ourselves should not be necessary but it is.
 # lightning still takes care of proper multiprocessing though
+
 data.prepare_data()
 data.setup()
 print("#### Data #####")
@@ -223,8 +224,22 @@ for k in data.datasets:
     print(f"{k}, {data.datasets[k].__class__.__name__}, {len(data.datasets[k])}")
 
 trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
-print('Now is training')
+# print('Now is training')
 # trainer.fit(model, data)
+
+from torch.utils.data import DataLoader, Dataset
+from ldm.data.ww_dataset import my_dataset
+
+test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
+test_loader = DataLoader(test_data, batch_size=4)
+
+for image_dict in test_loader:
+    image = image_dict['image']
+    latent_space = model.encode(image).sample().detach()
+    print(latent_space.size())
+
+    break
+
 
 
 
