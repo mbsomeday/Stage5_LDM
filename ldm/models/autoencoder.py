@@ -324,7 +324,9 @@ class AutoencoderKL(pl.LightningModule):
 
     def encode(self, x):
         h = self.encoder(x)
+        print('h.size:', h.size())
         moments = self.quant_conv(h)
+        print('moments.size:', moments.size())
         posterior = DiagonalGaussianDistribution(moments)
         return posterior
 
@@ -442,3 +444,35 @@ class IdentityFirstStage(torch.nn.Module):
 
     def forward(self, x, *args, **kwargs):
         return x
+
+
+# if __name__ == '__main__':
+#     ddconfig = {
+#         'double_z': True,
+#         'z_channels': 4,
+#         'resolution': 256,
+#         'in_channels': 3,
+#         'out_ch': 3,
+#         'ch': 128,
+#         'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
+#         'num_res_blocks': 2,
+#         'attn_resolutions': [],
+#         'dropout': 0.0
+#     }
+#
+#     lossconfig = {
+#         'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
+#         'params': {
+#             'disc_start': 50001,
+#             'kl_weight': 0.000001,
+#             'disc_weight': 0.5,
+#         }
+#     }
+#     model = AutoencoderKL(ddconfig=ddconfig,
+#                           lossconfig=lossconfig,
+#                           embed_dim=4,
+#                           )
+#     x = torch.rand((1, 3, 224, 224))
+#     out = model.encode(x)
+#     sample = out.sample()
+#     print('sample:', sample.size())
