@@ -539,6 +539,8 @@ if __name__ == "__main__":
         # model
         model = instantiate_from_config(config.model)
 
+        model.to('cuda')
+
         from torch.utils.data import DataLoader
         from ldm.data.ww_dataset import my_dataset
 
@@ -546,6 +548,7 @@ if __name__ == "__main__":
         loader = DataLoader(test_dataset, batch_size=4)
         for image_dict in loader:
             image = image_dict['image']
+            image.to('cuda')
 
             pos_out = model.encode(image).sample().detach()
             print(pos_out.size())
