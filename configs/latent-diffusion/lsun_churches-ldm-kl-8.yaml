@@ -45,7 +45,7 @@ model:
       params:
         embed_dim: 4
         monitor: "val/rec_loss"
-        ckpt_path: "/kaggle/working/Stage5_LDM/test.pth"
+        ckpt_path: "/kaggle/working/Stage5_LDM/test.ckpt"
         ddconfig:
           double_z: True
           z_channels: 4
