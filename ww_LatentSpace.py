@@ -544,10 +544,10 @@ if __name__ == "__main__":
 
         data = instantiate_from_config(config.data)
         loader = DataLoader(data, batch_size=4)
-        for image_dict in loader:
-            image = image_dict['image']
-            print(image.shape)
-            break
+        # for image_dict in loader:
+        #     image = image_dict['image']
+        #     print(image.shape)
+        #     break
 
 
 
