@@ -266,6 +266,7 @@ saved_tensor = None
 for idx, image_dict in enumerate(test_loader):
     image = image_dict['image']
     latent_space = model.encode(image).sample().detach()
+    print('laten size:', latent_space.size())
 
     if saved_tensor is None:
         saved_tensor = latent_space
