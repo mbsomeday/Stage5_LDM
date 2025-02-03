@@ -260,12 +260,21 @@ model = AutoencoderKL(ddconfig=ddconfig,
 test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
 test_loader = DataLoader(test_data, batch_size=4)
 
-for image_dict in test_loader:
+saved_tensor = None
+
+
+for idx, image_dict in enumerate(test_loader):
     image = image_dict['image']
     latent_space = model.encode(image).sample().detach()
     print(latent_space.size())
 
-    break
+    if saved_tensor is None:
+        saved_tensor = latent_space
+    else:
+        saved_tensor = torch.cat((saved_tensor, latent_space), 0)
+        print(saved_tensor.size)
+    if idx == 3:
+        break
 
 
 
