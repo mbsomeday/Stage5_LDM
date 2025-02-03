@@ -546,7 +546,11 @@ if __name__ == "__main__":
         loader = DataLoader(test_dataset, batch_size=4)
         for image_dict in loader:
             image = image_dict['image']
-            print(image.shape)
+
+            pos_out = model.encode(image).sample().detach()
+            print(pos_out.size())
+
+
             break
 
 
