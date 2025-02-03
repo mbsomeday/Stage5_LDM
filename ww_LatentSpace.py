@@ -258,7 +258,7 @@ model = AutoencoderKL(ddconfig=ddconfig,
                       )
 
 test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
-test_loader = DataLoader(test_data, batch_size=4)
+test_loader = DataLoader(test_data, batch_size=3)
 
 saved_tensor = None
 
