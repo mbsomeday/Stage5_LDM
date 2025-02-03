@@ -278,9 +278,8 @@ for idx, image_dict in enumerate(augTrain_loader):
     else:
         saved_tensor = torch.cat((saved_tensor, latent_space), 0)
         # print('拼接的：', saved_tensor.size())
-    # if idx == 3:
-    #     torch.save(saved_tensor, 'test_save_tensor.pt')
-    #     break
+
+torch.save(saved_tensor, 'D2_LatentSpace.pt')
 
 
 print('读取保存的tensor')
