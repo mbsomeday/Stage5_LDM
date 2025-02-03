@@ -255,19 +255,19 @@ lossconfig = {
 model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
-                      ckpt_path=None
+                      ckpt_path=r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
                       )
 model.eval()
 model = model.to('cuda')
 for param in model.parameters():
     param.requires_grad = False
 
-test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
-test_loader = DataLoader(test_data, batch_size=3)
+augTrain_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs', txt_name='augmentation_train.txt')
+augTrain_loader = DataLoader(augTrain_data, batch_size=8)
 
 saved_tensor = None
 
-for idx, image_dict in enumerate(test_loader):
+for idx, image_dict in enumerate(augTrain_loader):
     image = image_dict['image']
     image = image.to('cuda')
     latent_space = model.encoder(image).detach()
@@ -284,7 +284,7 @@ for idx, image_dict in enumerate(test_loader):
 
 
 print('读取保存的tensor')
-load_torch = torch.load('test_save_tensor.pt')
+load_torch = torch.load('D2_LatentSpace.pt')
 print(load_torch.size())
 
 
