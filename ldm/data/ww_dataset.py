@@ -1,4 +1,4 @@
-import torch, os, torchvision
+import torch, os, torchvision, random
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from PIL import Image
@@ -34,10 +34,18 @@ class my_dataset(Dataset):
             images.append(image_path)
             labels.append(contents[-1])
 
+        # 只从数据集中取100个
+        random.seed(13)
+        random.shuffle(images)
+        random.shuffle(labels)
+
+        images = images[:100]
+        labels = labels[:100]
+
         return images, labels
 
     def __len__(self):
-        return len(self.labels)
+        return len(self.images)
 
     def __getitem__(self, idx):
         image_path = self.images[idx]
