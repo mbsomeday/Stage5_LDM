@@ -540,6 +540,18 @@ if __name__ == "__main__":
         model = instantiate_from_config(config.model)
 
 
+        from torch.utils.data import DataLoader
+
+        data = instantiate_from_config(config.data)
+        loader = DataLoader(data, batch_size=4)
+        for image_dict in loader:
+            image = image_dict['image']
+            print(image.shape)
+            break
+
+
+
+
 
         # # allow checkpointing via USR1
         # def melk(*args, **kwargs):
