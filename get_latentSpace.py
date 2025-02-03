@@ -30,7 +30,12 @@ model = AutoencoderKL(ddconfig=ddconfig,
                       )
 print(torch.cuda.is_available())
 model.to('cuda')
-torch.save(model.state_dict(), r'test.ckpt')
+
+
+ckeckpoints = {
+    'state_dict': model.state_dict()
+}
+torch.save(ckeckpoints, r'test.ckpt')
 
 # model.eval()
 # x = torch.rand((1, 3, 224, 224))
