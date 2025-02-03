@@ -207,7 +207,7 @@ trainer_opt = argparse.Namespace(**trainer_config)
 lightning_config.trainer = trainer_config
 
 # model
-model = instantiate_from_config(config.model)
+# model = instantiate_from_config(config.model)
 
 trainer_kwargs = dict()
 
@@ -229,6 +229,33 @@ trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
 
 from torch.utils.data import DataLoader, Dataset
 from ldm.data.ww_dataset import my_dataset
+from ldm.models.autoencoder import AutoencoderKL
+
+ddconfig = {
+    'double_z': True,
+    'z_channels': 4,
+    'resolution': 256,
+    'in_channels': 3,
+    'out_ch': 3,
+    'ch': 128,
+    'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
+    'num_res_blocks': 2,
+    'attn_resolutions': [],
+    'dropout': 0.0
+}
+
+lossconfig = {
+    'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
+    'params' : {
+        'disc_start': 50001,
+        'kl_weight': 0.000001,
+        'disc_weight': 0.5,
+    }
+}
+model = AutoencoderKL(ddconfig=ddconfig,
+                      lossconfig=lossconfig,
+                      embed_dim=4,
+                      )
 
 test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
 test_loader = DataLoader(test_data, batch_size=4)
