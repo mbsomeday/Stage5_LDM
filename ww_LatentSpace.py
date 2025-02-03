@@ -255,16 +255,21 @@ lossconfig = {
 model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
+                      ckpt_path=None
                       )
+model.eval()
+model = model.to('cuda')
+for param in model.parameters():
+    param.requires_grad = False
 
 test_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
 test_loader = DataLoader(test_data, batch_size=3)
 
 saved_tensor = None
 
-
 for idx, image_dict in enumerate(test_loader):
     image = image_dict['image']
+    image = image.to('cuda')
     latent_space = model.encoder(image).detach()
     print('laten size:', latent_space.size())
 
