@@ -273,10 +273,13 @@ for idx, image_dict in enumerate(test_loader):
         saved_tensor = torch.cat((saved_tensor, latent_space), 0)
         print('拼接的：', saved_tensor.size())
     if idx == 3:
+        torch.save(saved_tensor, 'test_save_tensor.pt')
         break
 
 
-
+print('读取保存的tensor')
+load_torch = torch.load('test_save_tensor.pt')
+print(load_torch.size())
 
 
 
