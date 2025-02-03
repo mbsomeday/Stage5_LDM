@@ -544,11 +544,9 @@ if __name__ == "__main__":
 
         test_dataset = my_dataset(ds_dir=r'/kaggle/input/stage4-d4-7augs', txt_name='test.txt')
         loader = DataLoader(test_dataset, batch_size=4)
-        for image_dict, _ in loader:
-            print(type(image_dict))
-            # image = image_dict['image']
-            # print(image.shape)
-            print('ok')
+        for image_dict in loader:
+            image = image_dict['image']
+            print(image.shape)
             break
 
 
