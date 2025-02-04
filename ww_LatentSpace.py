@@ -278,6 +278,7 @@ augTrain_loader = DataLoader(augTrain_data, batch_size=32)
 print('Information:')
 print('AE_CKPT:',AE_CKPT)
 print('ds_dir:', ds_dir)
+print('ds_name:', ds_name)
 print('latent_name:', latent_name)
 print('txt_name:', txt_name)
 
