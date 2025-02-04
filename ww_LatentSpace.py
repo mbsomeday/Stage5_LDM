@@ -233,8 +233,8 @@ from ldm.models.autoencoder import AutoencoderKL
 
 AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt'
 ds_dir = r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs'
-latent_name = 'D1_AugTrain_LatentSpace.pt'
-txt_name = 'augmentation_train.txt'
+latent_name = 'D1_Test_LatentSpace.pt'
+txt_name = 'test.txt'
 
 
 ddconfig = {
