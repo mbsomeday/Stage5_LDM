@@ -271,6 +271,12 @@ for param in model.parameters():
 augTrain_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
 augTrain_loader = DataLoader(augTrain_data, batch_size=32)
 
+print('Information:')
+print('AE_CKPT:',AE_CKPT)
+print('ds_dir:', ds_dir)
+print('latent_name:', latent_name)
+print('txt_name:', txt_name)
+
 saved_tensor = None
 
 from tqdm import tqdm
