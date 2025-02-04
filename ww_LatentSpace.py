@@ -233,7 +233,8 @@ from ldm.models.autoencoder import AutoencoderKL
 
 AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d4/D4_epo34_01236.ckpt'
 ds_dir = r'/kaggle/input/stage4-d4-7augs'
-latent_name = 'D4_LatentSpace.pt'
+latent_name = 'D4_AugTrain_LatentSpace.pt'
+txt_name = 'augmentation_train.txt'
 
 
 ddconfig = {
@@ -267,8 +268,8 @@ model = model.to('cuda')
 for param in model.parameters():
     param.requires_grad = False
 
-augTrain_data = my_dataset(ds_dir=ds_dir, txt_name='augmentation_train.txt')
-augTrain_loader = DataLoader(augTrain_data, batch_size=16)
+augTrain_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
+augTrain_loader = DataLoader(augTrain_data, batch_size=32)
 
 saved_tensor = None
 
@@ -278,13 +279,11 @@ for idx, image_dict in enumerate(tqdm(augTrain_loader)):
     image = image_dict['image']
     image = image.to('cuda')
     latent_space = model.encoder(image).detach()
-    # print('laten size:', latent_space.size())
 
     if saved_tensor is None:
         saved_tensor = latent_space
     else:
         saved_tensor = torch.cat((saved_tensor, latent_space), 0)
-        # print('拼接的：', saved_tensor.size())
 
 torch.save(saved_tensor, latent_name)
 
@@ -292,8 +291,6 @@ torch.save(saved_tensor, latent_name)
 print('读取保存的tensor')
 load_torch = torch.load(latent_name)
 print(load_torch.size())
-
-
 
 
 
