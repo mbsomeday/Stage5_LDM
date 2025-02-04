@@ -231,9 +231,9 @@ from torch.utils.data import DataLoader, Dataset
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 
-AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt'
-ds_dir = r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs'
-latent_name = 'D1_LatentSpace.pt'
+AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt'
+ds_dir = r'/kaggle/input/stage4-d3-ecpnight-7augs'
+latent_name = 'D3_LatentSpace.pt'
 
 
 ddconfig = {
