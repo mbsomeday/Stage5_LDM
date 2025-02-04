@@ -232,11 +232,11 @@ from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 
 
-ds_name = 'D2'
-txt_name = 'val.txt'
+ds_name = 'D3'
+txt_name = 'augmentation_train.txt'
 
-autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
-ds_dir = r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs'
+autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt'
+ds_dir = r'/kaggle/input/stage4-d3-ecpnight-7augs'
 
 latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
 
