@@ -233,9 +233,9 @@ from ldm.models.autoencoder import AutoencoderKL
 
 
 ds_name = 'D2'
-txt_name = 'augmentation_train.txt'
+txt_name = 'test.txt'
 
-AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
+autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
 ds_dir = r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs'
 
 latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
