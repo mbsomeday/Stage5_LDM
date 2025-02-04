@@ -233,7 +233,7 @@ from ldm.models.autoencoder import AutoencoderKL
 
 
 ds_name = 'D2'
-txt_name = 'test.txt'
+txt_name = 'val.txt'
 
 autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
 ds_dir = r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs'
@@ -277,7 +277,7 @@ augTrain_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
 augTrain_loader = DataLoader(augTrain_data, batch_size=32)
 
 print('Information:')
-print('AE_CKPT:',autoencoder_ckpt)
+print('autoencoder_ckpt:',autoencoder_ckpt)
 print('ds_dir:', ds_dir)
 print('ds_name:', ds_name)
 print('latent_name:', latent_name)
