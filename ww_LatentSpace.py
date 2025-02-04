@@ -233,7 +233,7 @@ from ldm.models.autoencoder import AutoencoderKL
 
 
 ds_name = 'D3'
-txt_name = 'test.txt'
+txt_name = 'val.txt'
 
 autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt'
 ds_dir = r'/kaggle/input/stage4-d3-ecpnight-7augs'
