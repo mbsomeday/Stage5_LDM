@@ -231,13 +231,14 @@ from torch.utils.data import DataLoader, Dataset
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 
-ds_name = 'D4'
-txt_name = 'val.txt'
 
-AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d4/D4_epo34_01236.ckpt'
-ds_dir = r'/kaggle/input/stage4-d4-7augs'
+ds_name = 'D2'
+txt_name = 'augmentation_train.txt'
 
-latent_name = str(ds_name) + '_' + str(txt_name[:4]) + '_LatentSpace.pt'
+AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt'
+ds_dir = r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs'
+
+latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
 
 # '/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs/dataset_txt/augmentation_train.txt'
 
