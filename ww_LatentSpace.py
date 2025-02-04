@@ -232,7 +232,7 @@ from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 
 AE_CKPT = r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt'
-ds_dir = r'/kaggle/input/stage4-d1-ecpdaytime-7augs'
+ds_dir = r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs'
 latent_name = 'D1_LatentSpace.pt'
 
 
