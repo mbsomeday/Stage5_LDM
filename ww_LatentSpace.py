@@ -263,7 +263,7 @@ for param in model.parameters():
     param.requires_grad = False
 
 augTrain_data = my_dataset(ds_dir=r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs', txt_name='augmentation_train.txt')
-augTrain_loader = DataLoader(augTrain_data, batch_size=8)
+augTrain_loader = DataLoader(augTrain_data, batch_size=16)
 
 saved_tensor = None
 
