@@ -85,6 +85,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
     image = image.to(DEVICE)
 
     image_path = image_dict['file_path']
+    print(image_path)
     image_name = image_path.split('\\')[-1]
     print(image_name)
     break
