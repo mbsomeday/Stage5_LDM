@@ -78,23 +78,30 @@ for param in model.parameters():
     param.requires_grad = False
 
 saved_tensor = None
+name_list = []
 
 for idx, image_dict in enumerate(tqdm(cur_loader)):
     image = image_dict['image']
     image = image.to(DEVICE)
-    dec, posterior = model(image)
 
-    if saved_tensor is None:
-        saved_tensor = dec
-    else:
-        saved_tensor = torch.cat((saved_tensor, dec), 0)
+    image_path = image_dict['file_path']
+    image_name = image_path.split('\\')[-1]
+    print(image_name)
+    break
 
-
-torch.save(saved_tensor, recon_name)
-
-print('读取保存的tensor')
-load_torch = torch.load(recon_name)
-print(load_torch.size())
+#     dec, posterior = model(image)
+#
+#     if saved_tensor is None:
+#         saved_tensor = dec
+#     else:
+#         saved_tensor = torch.cat((saved_tensor, dec), 0)
+#
+#
+# torch.save(saved_tensor, recon_name)
+#
+# print('读取保存的tensor')
+# load_torch = torch.load(recon_name)
+# print(load_torch.size())
 
 
 
