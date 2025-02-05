@@ -35,11 +35,6 @@ parser.add_argument( "--txt_name", type=str)
 
 args = parser.parse_args()
 
-get_data_start = int(args.get_data_start)
-get_data_end = int(args.get_data_end)
-
-print(get_data_start)
-print(type(get_data_start))
 
 base_dir = r'/veracruz/home/j/jwang/scripts/Stage5_LDM'
 ds_name = args.ds_name
