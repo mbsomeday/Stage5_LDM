@@ -108,16 +108,16 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
         saved_tensor = torch.cat((saved_tensor, dec), 0)
 
 # 保存名字
-with open(recon_imageName_name, 'a') as f:
+with open(recon_imageName_path, 'a') as f:
     for item in name_list:
         msg = str(item) + '\n'
         f.write(msg)
 
 
-torch.save(saved_tensor, recon_tensor_name)
+torch.save(saved_tensor, recon_tensor_path)
 
 print('读取保存的tensor')
-load_torch = torch.load(recon_tensor_name)
+load_torch = torch.load(recon_tensor_path)
 print(load_torch.size())
 
 
