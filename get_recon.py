@@ -111,7 +111,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
     else:
         saved_tensor = torch.cat((saved_tensor, dec), 0)
 
-    if idx % 2000 == 0:
+    if idx % 2000 == 0 or idx == len(cur_loader) - 1:
         # 保存
         recon_tensor_name = str(save_i) + '_' + ds_name + '_' + txt_name[:-4] + '_ReconstructedImage.pt'
         recon_tensor_path = os.path.join(save_dir, recon_tensor_name)
@@ -128,14 +128,16 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
         saved_tensor = None
         name_list = []
 
-# 保存名字
-with open(recon_imageName_path, 'a') as f:
-    for item in name_list:
-        msg = str(item) + '\n'
-        f.write(msg)
 
 
-torch.save(saved_tensor, recon_tensor_path)
+# # 保存名字
+# with open(recon_imageName_path, 'a') as f:
+#     for item in name_list:
+#         msg = str(item) + '\n'
+#         f.write(msg)
+#
+#
+# torch.save(saved_tensor, recon_tensor_path)
 
 # print('读取保存的tensor')
 # load_torch = torch.load(recon_tensor_path)
