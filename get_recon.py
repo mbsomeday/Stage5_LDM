@@ -1,6 +1,8 @@
 '''
     获取 reconstruction images
 '''
+import os.path
+
 import torch.cuda
 from tqdm import tqdm
 from torch.utils.data import DataLoader, Dataset
@@ -32,17 +34,26 @@ parser.add_argument( "--txt_name", type=str)
 args = parser.parse_args()
 
 
+base_dir = r'/kaggle/working/Stage5_LDM'
 ds_name = args.ds_name
+save_dir = os.path.join(base_dir, ds_name)
+if not os.path.exists(save_dir):
+    os.mkdir(save_dir)
+
 ds_dir = dataset_dict[ds_name]
 txt_name = args.txt_name
 autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
 recon_tensor_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
+recon_tensor_path = os.path.join(save_dir, recon_tensor_name)
 recon_imageName_name = ds_name + '_' + txt_name[:-4] +'_Names.txt'
+recon_imageName_path = os.path.join(save_dir, recon_imageName_name)
+
 
 print('*' * 50)
 print(f'Dataset: {ds_dir} - {txt_name}\npath:{ds_dir}')
 print(f'latent_name: {recon_tensor_name}')
-print('recon_imageName_name:', recon_imageName_name)
+print('recon_tensor_path:', recon_tensor_path)
+print('recon_imageName_path:', recon_imageName_path)
 print('*' * 50)
 
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
