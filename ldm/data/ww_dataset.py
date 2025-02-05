@@ -6,13 +6,15 @@ import numpy as np
 
 
 class my_dataset(Dataset):
-    def __init__(self, ds_dir, txt_name):
+    def __init__(self, ds_dir, txt_name, get_data_start, get_data_end):
         # # 先判断是否是D4，是的话需要单独处理
         # ds_name = ds_dir.split(os.sep)[-1][:2]
         # self.D4_flag = True if ds_name == 'D4' else False
 
         self.ds_dir = ds_dir.replace('\\', os.sep)
         self.txt_name = txt_name
+        self.get_data_start = get_data_start
+        self.get_data_end = get_data_end
         self.img_transforms = transforms.Compose([
             transforms.ToTensor()
         ])
@@ -40,6 +42,12 @@ class my_dataset(Dataset):
         #
         # images = images[:100]
         # labels = labels[:100]
+
+        if self.get_data_end > len(images):
+            self.get_data_end = len(images)
+
+        images = images[self.get_data_start, self.get_data_end]
+        labels = labels[self.get_data_start, self.get_data_end]
 
         return images, labels
 
