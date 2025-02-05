@@ -85,7 +85,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
     image = image.to(DEVICE)
 
     image_names = image_dict['image_name']
-    name_list.append(image_names)
+    name_list = name_list + image_names
 
     if idx == 3:
         break
