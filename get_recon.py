@@ -10,16 +10,17 @@ import argparse
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
+from paths_dict import lca_dataset_dict
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-dataset_dict = {
-    'D1': r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs',
-    'D2': r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs',
-    'D3': r'/kaggle/input/stage4-d3-ecpnight-7augs',
-    'D4': r'/kaggle/input/stage4-d4-7augs'
-}
+# dataset_dict = {
+#     'D1': r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs',
+#     'D2': r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs',
+#     'D3': r'/kaggle/input/stage4-d3-ecpnight-7augs',
+#     'D4': r'/kaggle/input/stage4-d4-7augs'
+# }
 
 autoencoder_ckpt_dict = {
     'D1': r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt',
@@ -31,8 +32,6 @@ autoencoder_ckpt_dict = {
 parser = argparse.ArgumentParser()
 parser.add_argument( "--ds_name", type=str)
 parser.add_argument( "--txt_name", type=str)
-parser.add_argument( "--get_data_start", type=int)
-parser.add_argument( "--get_data_end", type=int)
 
 args = parser.parse_args()
 
@@ -42,23 +41,19 @@ get_data_end = int(args.get_data_end)
 print(get_data_start)
 print(type(get_data_start))
 
-base_dir = r'/kaggle/working/Stage5_LDM'
+base_dir = r'/veracruz/home/j/jwang/scripts/Stage5_LDM'
 ds_name = args.ds_name
 save_dir = os.path.join(base_dir, ds_name)
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
-if get_data_start != -1:
-    name_suffix = str(get_data_start) + 'T' + str(get_data_end)
-else:
-    name_suffix = ''
 
-ds_dir = dataset_dict[ds_name]
+ds_dir = lca_dataset_dict[ds_name]
 txt_name = args.txt_name
 autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
-recon_tensor_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage_' + name_suffix + '.pt'
+recon_tensor_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
 recon_tensor_path = os.path.join(save_dir, recon_tensor_name)
-recon_imageName_name = ds_name + '_' + txt_name[:-4] + '_Names_' + name_suffix + '.txt'
+recon_imageName_name = ds_name + '_' + txt_name[:-4] + '_Names.txt'
 recon_imageName_path = os.path.join(save_dir, recon_imageName_name)
 
 print('*' * 50)
@@ -68,7 +63,7 @@ print('recon_tensor_path:', recon_tensor_path)
 print('recon_imageName_path:', recon_imageName_path)
 print('*' * 50)
 
-cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name, get_data_start=get_data_start, get_data_end=get_data_end)
+cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
 cur_loader = DataLoader(cur_data, batch_size=32, shuffle=False)
 
 ddconfig = {
