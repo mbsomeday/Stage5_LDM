@@ -44,7 +44,7 @@ print(f'latent_name: {recon_name}')
 print('*' * 50)
 
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
-cur_loader = DataLoader(cur_data, batch_size=32)
+cur_loader = DataLoader(cur_data, batch_size=3)
 
 # ddconfig = {
 #     'double_z': True,
@@ -78,18 +78,20 @@ cur_loader = DataLoader(cur_data, batch_size=32)
 #     param.requires_grad = False
 #
 # saved_tensor = None
-# name_list = []
+name_list = []
 
 for idx, image_dict in enumerate(tqdm(cur_loader)):
     image = image_dict['image']
     image = image.to(DEVICE)
 
-    image_path = image_dict['file_path']
-    print(image_path)
-    image_name = image_path.split('\\')[-1]
-    print(image_name)
-    break
+    image_names = image_dict['image_name']
+    name_list.append(image_names)
 
+    if idx == 3:
+        break
+
+print(name_list)
+print(len(name_list))
 #     dec, posterior = model(image)
 #
 #     if saved_tensor is None:

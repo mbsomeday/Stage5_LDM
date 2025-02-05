@@ -54,9 +54,12 @@ class my_dataset(Dataset):
         image = self.img_transforms(image)
         label = np.array(label).astype(np.int64)
 
+        image_name = image_path.split(os.sep)[-1]
+
         image_dict = {
             'image': image,
-            'file_path': image_path
+            'file_path': image_path,
+            'image_name': image_name
         }
 
         return image_dict
