@@ -29,7 +29,7 @@ ds_name = 'D1'
 ds_dir = dataset_dict[ds_name]
 txt_name = 'test.txt'
 autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
-recon_name = ds_name + '_ReconstructedImage.pt'
+recon_name = ds_name + txt_name[:-4] +'_ReconstructedImage.pt'
 
 print('*' * 50)
 print(f'Dataset: {ds_dir} - {txt_name}\npath:{ds_dir}')
