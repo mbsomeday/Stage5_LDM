@@ -39,6 +39,9 @@ args = parser.parse_args()
 get_data_start = int(args.get_data_start)
 get_data_end = int(args.get_data_end)
 
+print(get_data_start)
+print(type(get_data_start))
+
 base_dir = r'/kaggle/working/Stage5_LDM'
 ds_name = args.ds_name
 save_dir = os.path.join(base_dir, ds_name)
