@@ -111,7 +111,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
     else:
         saved_tensor = torch.cat((saved_tensor, dec), 0)
 
-    if idx % 2000 == 0 or idx == len(cur_loader) - 1:
+    if idx % 125 == 0 or idx == len(cur_loader) - 1:
         # 保存
         recon_tensor_name = str(save_i) + '_' + ds_name + '_' + txt_name[:-4] + '_ReconstructedImage.pt'
         recon_tensor_path = os.path.join(save_dir, recon_tensor_name)
