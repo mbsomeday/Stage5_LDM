@@ -299,7 +299,6 @@ for idx, image_dict in enumerate(tqdm(augTrain_loader)):
 
 torch.save(saved_tensor, latent_name)
 
-
 print('读取保存的tensor')
 load_torch = torch.load(latent_name)
 print(load_torch.size())
