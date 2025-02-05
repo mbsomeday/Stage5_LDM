@@ -44,7 +44,7 @@ print(f'latent_name: {recon_name}')
 print('*' * 50)
 
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
-cur_loader = DataLoader(cur_data, batch_size=32)
+cur_loader = DataLoader(cur_data, batch_size=64)
 
 ddconfig = {
     'double_z': True,
