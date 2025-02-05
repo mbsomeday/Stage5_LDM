@@ -36,48 +36,49 @@ ds_name = args.ds_name
 ds_dir = dataset_dict[ds_name]
 txt_name = args.txt_name
 autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
-recon_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
+recon_tensor_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
+recon_imageName_name = ds_name + '_' + txt_name[:-4] +'_Names.txt'
 
 print('*' * 50)
 print(f'Dataset: {ds_dir} - {txt_name}\npath:{ds_dir}')
-print(f'latent_name: {recon_name}')
+print(f'latent_name: {recon_tensor_name}')
 print('*' * 50)
 
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
 cur_loader = DataLoader(cur_data, batch_size=3)
 
-# ddconfig = {
-#     'double_z': True,
-#     'z_channels': 4,
-#     'resolution': 256,
-#     'in_channels': 3,
-#     'out_ch': 3,
-#     'ch': 128,
-#     'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
-#     'num_res_blocks': 2,
-#     'attn_resolutions': [],
-#     'dropout': 0.0
-# }
-#
-# lossconfig = {
-#     'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
-#     'params' : {
-#         'disc_start': 50001,
-#         'kl_weight': 0.000001,
-#         'disc_weight': 0.5,
-#     }
-# }
-# model = AutoencoderKL(ddconfig=ddconfig,
-#                       lossconfig=lossconfig,
-#                       embed_dim=4,
-#                       ckpt_path=autoencoder_ckpt
-#                       )
-# model.eval()
-# model = model.to(DEVICE)
-# for param in model.parameters():
-#     param.requires_grad = False
-#
-# saved_tensor = None
+ddconfig = {
+    'double_z': True,
+    'z_channels': 4,
+    'resolution': 256,
+    'in_channels': 3,
+    'out_ch': 3,
+    'ch': 128,
+    'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
+    'num_res_blocks': 2,
+    'attn_resolutions': [],
+    'dropout': 0.0
+}
+
+lossconfig = {
+    'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
+    'params' : {
+        'disc_start': 50001,
+        'kl_weight': 0.000001,
+        'disc_weight': 0.5,
+    }
+}
+model = AutoencoderKL(ddconfig=ddconfig,
+                      lossconfig=lossconfig,
+                      embed_dim=4,
+                      ckpt_path=autoencoder_ckpt
+                      )
+model.eval()
+model = model.to(DEVICE)
+for param in model.parameters():
+    param.requires_grad = False
+
+saved_tensor = None
 name_list = []
 
 for idx, image_dict in enumerate(tqdm(cur_loader)):
@@ -87,24 +88,25 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
     image_names = image_dict['image_name']
     name_list = name_list + image_names
 
-    if idx == 3:
-        break
+    dec, posterior = model(image)
 
-print(name_list)
-print(len(name_list))
-#     dec, posterior = model(image)
-#
-#     if saved_tensor is None:
-#         saved_tensor = dec
-#     else:
-#         saved_tensor = torch.cat((saved_tensor, dec), 0)
-#
-#
-# torch.save(saved_tensor, recon_name)
-#
-# print('读取保存的tensor')
-# load_torch = torch.load(recon_name)
-# print(load_torch.size())
+    if saved_tensor is None:
+        saved_tensor = dec
+    else:
+        saved_tensor = torch.cat((saved_tensor, dec), 0)
+
+# 保存名字
+with open('recon_imageName_name', 'a') as f:
+    for item in name_list:
+        msg = str(item) + '\n'
+        f.write(msg)
+
+
+torch.save(saved_tensor, recon_tensor_name)
+
+print('读取保存的tensor')
+load_torch = torch.load(recon_tensor_name)
+print(load_torch.size())
 
 
 
