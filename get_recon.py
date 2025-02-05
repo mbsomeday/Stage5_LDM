@@ -42,6 +42,7 @@ recon_imageName_name = ds_name + '_' + txt_name[:-4] +'_Names.txt'
 print('*' * 50)
 print(f'Dataset: {ds_dir} - {txt_name}\npath:{ds_dir}')
 print(f'latent_name: {recon_tensor_name}')
+print('recon_imageName_name:', recon_imageName_name)
 print('*' * 50)
 
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
@@ -96,7 +97,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
         saved_tensor = torch.cat((saved_tensor, dec), 0)
 
 # 保存名字
-with open('recon_imageName_name', 'a') as f:
+with open(recon_imageName_name, 'a') as f:
     for item in name_list:
         msg = str(item) + '\n'
         f.write(msg)
