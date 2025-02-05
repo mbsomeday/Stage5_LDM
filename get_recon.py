@@ -4,6 +4,7 @@
 import torch.cuda
 from tqdm import tqdm
 from torch.utils.data import DataLoader, Dataset
+import argparse
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
@@ -25,9 +26,15 @@ autoencoder_ckpt_dict = {
     'D4': r'/kaggle/input/stage5-weights-ldm-d4/D4_epo34_01236.ckpt'
 }
 
-ds_name = 'D1'
+parser = argparse.ArgumentParser()
+parser.add_argument( "--ds_name", type=str)
+parser.add_argument( "--txt_name", type=str)
+args = parser.parse_args()
+
+
+ds_name = args.ds_name
 ds_dir = dataset_dict[ds_name]
-txt_name = 'val.txt'
+txt_name = args.txt_name
 autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
 recon_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
 
