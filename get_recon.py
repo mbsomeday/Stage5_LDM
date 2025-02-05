@@ -10,7 +10,7 @@ import argparse
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
-from paths_dict import lca_dataset_dict
+from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -22,12 +22,12 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 #     'D4': r'/kaggle/input/stage4-d4-7augs'
 # }
 
-autoencoder_ckpt_dict = {
-    'D1': r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt',
-    'D2': r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt',
-    'D3': r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt',
-    'D4': r'/kaggle/input/stage5-weights-ldm-d4/D4_epo34_01236.ckpt'
-}
+# autoencoder_ckpt_dict = {
+#     'D1': r'/kaggle/input/stage5-weights-ldm-d1/D1_epo26_00894.ckpt',
+#     'D2': r'/kaggle/input/stage5-weights-ldm-d2/D2_epo59_01239.ckpt',
+#     'D3': r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt',
+#     'D4': r'/kaggle/input/stage5-weights-ldm-d4/D4_epo34_01236.ckpt'
+# }
 
 parser = argparse.ArgumentParser()
 parser.add_argument( "--ds_name", type=str)
@@ -45,7 +45,7 @@ if not os.path.exists(save_dir):
 
 ds_dir = lca_dataset_dict[ds_name]
 txt_name = args.txt_name
-autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
+autoencoder_ckpt = lca_autoencoder_ckpt_dict[ds_name]
 recon_tensor_name = ds_name + '_' + txt_name[:-4] +'_ReconstructedImage.pt'
 recon_tensor_path = os.path.join(save_dir, recon_tensor_name)
 recon_imageName_name = ds_name + '_' + txt_name[:-4] + '_Names.txt'
