@@ -46,39 +46,39 @@ print('*' * 50)
 cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
 cur_loader = DataLoader(cur_data, batch_size=32)
 
-ddconfig = {
-    'double_z': True,
-    'z_channels': 4,
-    'resolution': 256,
-    'in_channels': 3,
-    'out_ch': 3,
-    'ch': 128,
-    'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
-    'num_res_blocks': 2,
-    'attn_resolutions': [],
-    'dropout': 0.0
-}
-
-lossconfig = {
-    'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
-    'params' : {
-        'disc_start': 50001,
-        'kl_weight': 0.000001,
-        'disc_weight': 0.5,
-    }
-}
-model = AutoencoderKL(ddconfig=ddconfig,
-                      lossconfig=lossconfig,
-                      embed_dim=4,
-                      ckpt_path=autoencoder_ckpt
-                      )
-model.eval()
-model = model.to(DEVICE)
-for param in model.parameters():
-    param.requires_grad = False
-
-saved_tensor = None
-name_list = []
+# ddconfig = {
+#     'double_z': True,
+#     'z_channels': 4,
+#     'resolution': 256,
+#     'in_channels': 3,
+#     'out_ch': 3,
+#     'ch': 128,
+#     'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
+#     'num_res_blocks': 2,
+#     'attn_resolutions': [],
+#     'dropout': 0.0
+# }
+#
+# lossconfig = {
+#     'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
+#     'params' : {
+#         'disc_start': 50001,
+#         'kl_weight': 0.000001,
+#         'disc_weight': 0.5,
+#     }
+# }
+# model = AutoencoderKL(ddconfig=ddconfig,
+#                       lossconfig=lossconfig,
+#                       embed_dim=4,
+#                       ckpt_path=autoencoder_ckpt
+#                       )
+# model.eval()
+# model = model.to(DEVICE)
+# for param in model.parameters():
+#     param.requires_grad = False
+#
+# saved_tensor = None
+# name_list = []
 
 for idx, image_dict in enumerate(tqdm(cur_loader)):
     image = image_dict['image']
