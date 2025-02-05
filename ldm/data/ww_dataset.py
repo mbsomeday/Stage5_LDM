@@ -46,8 +46,8 @@ class my_dataset(Dataset):
         if self.get_data_end > len(images):
             self.get_data_end = len(images)
 
-        images = images[self.get_data_start, self.get_data_end]
-        labels = labels[self.get_data_start, self.get_data_end]
+        images = images[self.get_data_start: self.get_data_end]
+        labels = labels[self.get_data_start: self.get_data_end]
 
         return images, labels
 
