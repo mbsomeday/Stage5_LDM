@@ -36,8 +36,8 @@ parser.add_argument( "--get_data_end", type=int)
 
 args = parser.parse_args()
 
-get_data_start = args.get_data_start
-get_data_end = args.get_data_end
+get_data_start = int(args.get_data_start)
+get_data_end = int(args.get_data_end)
 
 base_dir = r'/kaggle/working/Stage5_LDM'
 ds_name = args.ds_name
