@@ -65,7 +65,7 @@ print('recon_tensor_path:', recon_tensor_path)
 print('recon_imageName_path:', recon_imageName_path)
 print('*' * 50)
 
-cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name, get_num=[get_data_start, get_data_end])
+cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name, get_data_start=get_data_start, get_data_end=get_data_end)
 cur_loader = DataLoader(cur_data, batch_size=32, shuffle=False)
 
 ddconfig = {
