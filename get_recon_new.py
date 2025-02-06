@@ -47,7 +47,7 @@ def create_dirs(base_path, ds_name):
 # configs
 ds_name = 'D1'
 txt_name = 'val.txt'
-save_base = r'/veracruz/home/j/jwang/scripts/Stage5_LDM/D1'
+save_base = r'/veracruz/home/j/jwang/scripts/Stage5_LDM'
 
 # 根据configuration拿到的变量
 ds_dir = lca_dataset_dict[ds_name]
