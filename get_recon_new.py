@@ -8,7 +8,7 @@ from torchvision import utils as vutils
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
-from paths_dict import local_dataset_dict, local_autoencoder_ckpt_dict
+from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict
 
 
 def save_image_tensor(input_tensor: torch.Tensor, filename):
@@ -47,10 +47,10 @@ def create_dirs(base_path, ds_name):
 # configs
 ds_name = 'D1'
 txt_name = 'val.txt'
-save_base = r'E:\Latent_Space'
+save_base = r'/veracruz/home/j/jwang/scripts/Stage5_LDM/D1'
 
 # 根据configuration拿到的变量
-ds_dir = local_dataset_dict[ds_name]
+ds_dir = lca_dataset_dict[ds_name]
 save_dataset_dir = os.path.join(save_base, ds_name)
 
 # 打印输出信息
@@ -85,7 +85,7 @@ lossconfig = {
 model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
-                      ckpt_path=local_autoencoder_ckpt_dict[ds_name]
+                      ckpt_path=lca_autoencoder_ckpt_dict[ds_name]
                       )
 model.eval()
 for param in model.parameters():
