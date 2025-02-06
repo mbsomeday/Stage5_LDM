@@ -16,8 +16,20 @@ lca_autoencoder_ckpt_dict = {
 }
 
 
+local_dataset_dict = {
+    'D1': r'D:\my_phd\dataset\Stage3\D1_ECPDaytime',
+    'D2': r'D:\my_phd\dataset\Stage3\D2_CityPersons',
+    'D3': r'D:\my_phd\dataset\Stage3\D3_ECPNight',
+    'D4': r'D:\my_phd\dataset\Stage3\D4_BDD100K',
+}
 
 
+local_autoencoder_ckpt_dict = {
+    'D1': r'D:\my_phd\Model_Weights\Stage5\LDM_AE_ckpt\D1_epo26_00894.ckpt',
+    'D2': r'D:\my_phd\Model_Weights\Stage5\LDM_AE_ckpt\D2_epo59_01239.ckpt',
+    'D3': r'D:\my_phd\Model_Weights\Stage5\LDM_AE_ckpt\D3_epo49_01236.ckpt',
+    'D4': r'D:\my_phd\Model_Weights\Stage5\LDM_AE_ckpt\D4_epo34_01236.ckpt',
+}
 
 
 

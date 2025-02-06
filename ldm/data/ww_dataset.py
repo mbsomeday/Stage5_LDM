@@ -59,7 +59,8 @@ class my_dataset(Dataset):
         image_dict = {
             'image': image,
             'file_path': image_path,
-            'image_name': image_name
+            'image_name': image_name,
+            'label': label
         }
 
         return image_dict
