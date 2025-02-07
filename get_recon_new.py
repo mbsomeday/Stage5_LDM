@@ -115,6 +115,7 @@ for idx, image_dict in enumerate(tqdm(cur_loader)):
 
     if idx != 0 and ((idx+1) % 2000 == 0 or (idx+1) == len(cur_loader)):
         tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+        tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
         torch.save(rec_dict, tensorDict_save_name)
         print(f'.pt file save to {tensorDict_save_name}')
         # 重置字典
