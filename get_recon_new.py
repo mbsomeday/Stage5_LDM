@@ -115,21 +115,17 @@ with torch.no_grad():
         dec, posterior = model(images)
         image_paths = image_dict['file_path']
 
-        for idx, img_path in enumerate(image_paths):
+        for img_idx, img_path in enumerate(image_paths):
             image_save_dir_part = img_path.split(ds_path.split(os.sep)[-1])[-1][1:]
-            rec_dict.update({image_save_dir_part: dec[idx]})
+            rec_dict.update({image_save_dir_part: dec[img_idx]})
 
-        if idx != 0:
-            print(f'idx+1:{idx+1}, len(cur_loader):{len(cur_loader)}')
-            if (idx+1) % int(2000/batch_size) == 0 or (idx+1) == len(cur_loader):
-                print('idx+1:', idx+1)
-                print('len(cur_loader):', len(cur_loader))
-                tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
-                tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
-                torch.save(rec_dict, tensorDict_save_path)
-                print(f'.pt file save to {tensorDict_save_path}')
-                # 重置字典
-                rec_dict = {}
+        if idx != 0 and ((idx+1) % int(2000/batch_size) == 0 or (idx+1) == len(cur_loader)):
+            tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+            tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
+            torch.save(rec_dict, tensorDict_save_path)
+            print(f'.pt file save to {tensorDict_save_path}')
+            # 重置字典
+            rec_dict = {}
 
 
 
