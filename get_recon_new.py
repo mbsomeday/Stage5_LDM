@@ -5,7 +5,7 @@ from torchvision import utils as vutils
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
-from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict
+from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict, kaggle_dataset_dict, kaggle_autoencoder_ckpt_dict
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -54,7 +54,8 @@ elif 'my_phd' in cwd:
     autoencoder_ckpt_dict = local_autoencoder_ckpt_dict
 elif 'kaggle' in cwd:
     print(f'Run on kaggle -- {cwd}')
-    raise Exception('还未配置kaggle的路径！')
+    dataset_dict = kaggle_dataset_dict
+    autoencoder_ckpt_dict = kaggle_autoencoder_ckpt_dict
 else:
     raise Exception('运行平台未知，需配置路径!')
 
