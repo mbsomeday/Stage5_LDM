@@ -46,7 +46,7 @@ def create_dirs(base_path, ds_name):
 
 # configs
 ds_name = 'D1'
-txt_name = 'val.txt'
+txt_name = 'augmentation_train.txt'
 save_base = r'/veracruz/home/j/jwang/scripts/Stage5_LDM'
 
 # 根据configuration拿到的变量
