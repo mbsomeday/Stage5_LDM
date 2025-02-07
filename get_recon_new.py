@@ -120,6 +120,7 @@ with torch.no_grad():
             rec_dict.update({image_save_dir_part: dec[idx]})
 
         if idx != 0:
+            print('hhh')
             if (idx+1) % int(2000/batch_size) == 0 or (idx+1) == len(cur_loader):
                 print('idx+1:', idx+1)
                 print('len(cur_loader):', len(cur_loader))
