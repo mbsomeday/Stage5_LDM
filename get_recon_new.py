@@ -7,6 +7,7 @@ from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict
 
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def save_image_tensor(input_tensor: torch.Tensor, filename):
     """
@@ -87,6 +88,7 @@ model = AutoencoderKL(ddconfig=ddconfig,
                       ckpt_path=autoencoder_ckpt_dict[ds_name]
                       )
 model.eval()
+model = model.to(DEVICE)
 for param in model.parameters():
     param.requires_grad = False
 
@@ -105,7 +107,7 @@ print('*' * 60)
 
 with torch.no_grad():
     for idx, image_dict in enumerate(tqdm(cur_loader)):
-        images = image_dict['image']
+        images = image_dict['image'].to(DEVICE)
         dec, posterior = model(images)
         image_paths = image_dict['file_path']
 
