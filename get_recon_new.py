@@ -92,7 +92,7 @@ for param in model.parameters():
 
 # dataset
 cur_data = my_dataset(ds_dir=ds_path, txt_name=txt_name)
-cur_loader = DataLoader(cur_data, batch_size=1, shuffle=False)
+cur_loader = DataLoader(cur_data, batch_size=32, shuffle=False)
 
 tensorDict_save_dir = os.path.join(cwd, ds_name, txt_name[:-4])
 if not os.path.exists(tensorDict_save_dir):
@@ -103,24 +103,23 @@ print('Num of data:', len(cur_data))
 print(fr'Reconstructed images will save to {tensorDict_save_dir}')
 print('*' * 60)
 
-for idx, image_dict in enumerate(tqdm(cur_loader)):
-    image_path = image_dict['file_path'][0]
-    image_save_dir_part = image_path.split(ds_path.split(os.sep)[-1])[-1][1:]
+with torch.no_grad():
+    for idx, image_dict in enumerate(tqdm(cur_loader)):
+        images = image_dict['image']
+        dec, posterior = model(images)
+        image_paths = image_dict['file_path']
 
-    tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+        for idx, img_path in enumerate(image_paths):
+            image_save_dir_part = img_path.split(ds_path.split(os.sep)[-1])[-1][1:]
+            rec_dict.update({image_save_dir_part: dec[idx]})
 
-    image = image_dict['image']
-    dec, posterior = model(image)
-    rec_dict.update({image_save_dir_part: dec})
-
-    if idx != 0 and ((idx+1) % 2000 == 0 or (idx+1) == len(cur_loader)):
-        tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
-        tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
-        torch.save(rec_dict, tensorDict_save_path)
-        print(f'.pt file save to {tensorDict_save_path}')
-        # 重置字典
-        rec_dict = {}
-
+        if idx != 0 and ((idx+1) % 2000 == 0 or (idx+1) == len(cur_loader)):
+            tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+            tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
+            torch.save(rec_dict, tensorDict_save_path)
+            print(f'.pt file save to {tensorDict_save_path}')
+            # 重置字典
+            rec_dict = {}
 
 
 
