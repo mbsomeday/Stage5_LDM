@@ -84,7 +84,7 @@ lossconfig = {
 model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
-                      ckpt_path=local_autoencoder_ckpt_dict[ds_name]
+                      ckpt_path=autoencoder_ckpt_dict[ds_name]
                       )
 model.eval()
 for param in model.parameters():
