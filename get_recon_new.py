@@ -29,6 +29,7 @@ def parse_args():
     parse = argparse.ArgumentParser()
     parse.add_argument('--ds_name', type=str)
     parse.add_argument('--txt_name', type=str)
+    parse.add_argument('--batch_size', default=32, type=int)
 
     args = parse.parse_args()
     return args
@@ -38,6 +39,7 @@ args = parse_args()
 
 ds_name = args.ds_name
 txt_name = args.txt_name
+batch_size = args.batch_size
 
 cwd = os.getcwd()
 
@@ -61,6 +63,7 @@ else:
 
 ds_path = dataset_dict[ds_name]
 print(f'Dataset: {ds_name} - txt: {txt_name} \nDataset Path:{ds_path}')
+print(f'Batch size: {batch_size}')
 
 # model
 ddconfig = {
@@ -95,7 +98,7 @@ for param in model.parameters():
 
 # dataset
 cur_data = my_dataset(ds_dir=ds_path, txt_name=txt_name)
-cur_loader = DataLoader(cur_data, batch_size=32, shuffle=False)
+cur_loader = DataLoader(cur_data, batch_size=batch_size, shuffle=False)
 
 tensorDict_save_dir = os.path.join(cwd, ds_name, txt_name[:-4])
 if not os.path.exists(tensorDict_save_dir):
@@ -116,7 +119,9 @@ with torch.no_grad():
             image_save_dir_part = img_path.split(ds_path.split(os.sep)[-1])[-1][1:]
             rec_dict.update({image_save_dir_part: dec[idx]})
 
-        if idx != 0 and ((idx+1) % 2000 == 0 or (idx+1) == len(cur_loader)):
+        if idx != 0 and ((idx+1) % int(2000/batch_size) == 0 or (idx+1) == len(cur_loader)):
+            print('idx+1:', idx+1)
+            print('len(cur_loader):', len(cur_loader))
             tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
             tensorDict_save_path = os.path.join(cwd, ds_name, txt_name[:-4], tensorDict_save_name)
             torch.save(rec_dict, tensorDict_save_path)
