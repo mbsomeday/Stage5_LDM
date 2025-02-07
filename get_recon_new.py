@@ -24,7 +24,6 @@ def save_image_tensor(input_tensor: torch.Tensor, filename):
     vutils.save_image(input_tensor, filename)
 
 
-
 def parse_args():
     parse = argparse.ArgumentParser()
     parse.add_argument('--ds_name', type=str)
@@ -38,7 +37,6 @@ args = parse_args()
 
 ds_name = args.ds_name
 txt_name = args.txt_name
-ds_path = local_dataset_dict[ds_name]
 
 cwd = os.getcwd()
 
@@ -59,6 +57,7 @@ elif 'kaggle' in cwd:
 else:
     raise Exception('运行平台未知，需配置路径!')
 
+ds_path = dataset_dict[ds_name]
 print(f'Dataset: {ds_name} - txt: {txt_name} \nDataset Path:{ds_path}')
 
 # model
