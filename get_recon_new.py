@@ -1,14 +1,11 @@
-import os
-import torch
+import os, torch, argparse
 from tqdm import tqdm
 from torch.utils.data import DataLoader, Dataset
-import argparse
 from torchvision import utils as vutils
-
 
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
-from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict
+from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict
 
 
 def save_image_tensor(input_tensor: torch.Tensor, filename):
@@ -17,8 +14,9 @@ def save_image_tensor(input_tensor: torch.Tensor, filename):
     :param input_tensor: 要保存的tensor
     :param filename: 保存的文件名
     """
+    assert (len(input_tensor.shape) == 4 and input_tensor.shape[0] == 1)
     # 复制一份
-    input_tensor = input_tensor.clone()
+    input_tensor = input_tensor.clone().detach()
     # 到cpu
     input_tensor = input_tensor.to(torch.device('cpu'))
     # 反归一化
@@ -26,40 +24,42 @@ def save_image_tensor(input_tensor: torch.Tensor, filename):
     vutils.save_image(input_tensor, filename)
 
 
-def my_make_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print(f'Create {path}')
 
-def create_dirs(base_path, ds_name):
-    name_list = ['nonPedestrian', 'pedestrian']
-    if ds_name == 'D4':
-        time_list = ['daytime', 'dusk', 'night']
-    else:
-        time_list = ['']
-    aug_dir = os.path.join(base_path, 'augmentation_train')
-    my_make_dir(aug_dir)
-    for n in name_list:
-        for t in time_list:
-            my_make_dir(os.path.join(base_path, n, t))
+def parse_args():
+    parse = argparse.ArgumentParser()
+    parse.add_argument('--ds_name', type=str)
+    parse.add_argument('--txt_name', type=str)
 
+    args = parse.parse_args()
+    return args
 
-# configs
-ds_name = 'D1'
-txt_name = 'augmentation_train.txt'
-save_base = r'/veracruz/home/j/jwang/scripts/Stage5_LDM'
+# 通过传入参数进行配置
+args = parse_args()
 
-# 根据configuration拿到的变量
-ds_dir = lca_dataset_dict[ds_name]
-save_dataset_dir = os.path.join(save_base, ds_name)
+ds_name = args.ds_name
+txt_name = args.txt_name
+ds_path = local_dataset_dict[ds_name]
 
-# 打印输出信息
+cwd = os.getcwd()
+
 print('*' * 60)
-print('Confige Information:')
-print(f'dataset: {ds_name} -- dataset path: {ds_dir} -- {txt_name}')
-print(f'Save to {save_dataset_dir}')
-print('*' * 60)
+dataset_dict = ''
+autoencoder_ckpt_dict = ''
+if 'veracruz' in cwd:
+    print(f'Run on LCA -- {cwd}')
+    dataset_dict = lca_dataset_dict
+    autoencoder_ckpt_dict = lca_autoencoder_ckpt_dict
+elif 'my_phd' in cwd:
+    print(f'Run on local -- {cwd}')
+    dataset_dict = local_dataset_dict
+    autoencoder_ckpt_dict = local_autoencoder_ckpt_dict
+elif 'kaggle' in cwd:
+    print(f'Run on kaggle -- {cwd}')
+    raise Exception('还未配置kaggle的路径！')
+else:
+    raise Exception('运行平台未知，需配置路径!')
 
+print(f'Dataset: {ds_name} - txt: {txt_name} \nDataset Path:{ds_path}')
 
 # model
 ddconfig = {
@@ -85,33 +85,41 @@ lossconfig = {
 model = AutoencoderKL(ddconfig=ddconfig,
                       lossconfig=lossconfig,
                       embed_dim=4,
-                      ckpt_path=lca_autoencoder_ckpt_dict[ds_name]
+                      ckpt_path=local_autoencoder_ckpt_dict[ds_name]
                       )
 model.eval()
 for param in model.parameters():
     param.requires_grad = False
 
 # dataset
-cur_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
+cur_data = my_dataset(ds_dir=ds_path, txt_name=txt_name)
 cur_loader = DataLoader(cur_data, batch_size=1, shuffle=False)
 
+tensorDict_save_dir = os.path.join(cwd, ds_name, txt_name[:-4])
+if not os.path.exists(tensorDict_save_dir):
+    os.makedirs(tensorDict_save_dir)
+
+rec_dict = {}
+print('Num of data:', len(cur_data))
+print(fr'Reconstructed images will save to {tensorDict_save_dir}')
+print('*' * 60)
 
 for idx, image_dict in enumerate(tqdm(cur_loader)):
-    image = image_dict['image']
-    image_name = image_dict['image_name'][0]
     image_path = image_dict['file_path'][0]
-    label = int(image_dict['label'])
+    image_save_dir_part = image_path.split(ds_path.split(os.sep)[-1])[-1][1:]
 
-    ds_dir_name = ds_dir.split('\\')[-1]
-    part_path = image_path.split(ds_dir_name)[-1][1:]
-    image_save_path = os.path.join(save_dataset_dir, part_path)
+    tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+
+    image = image_dict['image']
     dec, posterior = model(image)
-    save_image_tensor(dec[0], image_save_path)
+    rec_dict.update({image_save_dir_part: dec})
 
+    if idx != 0 and ((idx+1) % 2000 == 0 or (idx+1) == len(cur_loader)):
+        tensorDict_save_name = ds_name + '_' + str(txt_name[:-4]) + '_' + str(idx + 1) + '.pt'
+        torch.save(rec_dict, tensorDict_save_name)
 
-
-
-
+        # 重置字典
+        rec_dict = {}
 
 
 
