@@ -115,6 +115,8 @@ def get_latentSpace(ds_name):
 
 
 
+get_latentSpace(ds_name)
+
 
 
 
