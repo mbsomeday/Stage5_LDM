@@ -23,220 +23,35 @@ from ldm.data.base import Txt2ImgIterableBaseDataset
 from ldm.util import instantiate_from_config
 
 
-# def get_parser(**parser_kwargs):
-#     def str2bool(v):
-#         if isinstance(v, bool):
-#             return v
-#         if v.lower() in ("yes", "true", "t", "y", "1"):
-#             return True
-#         elif v.lower() in ("no", "false", "f", "n", "0"):
-#             return False
-#         else:
-#             raise argparse.ArgumentTypeError("Boolean value expected.")
-#
-#     parser = argparse.ArgumentParser(**parser_kwargs)
-#     parser.add_argument(
-#         "-n",
-#         "--name",
-#         type=str,
-#         const=True,
-#         default="",
-#         nargs="?",
-#         help="postfix for logdir",
-#     )
-#     parser.add_argument(
-#         "-r",
-#         "--resume",
-#         type=str,
-#         const=True,
-#         default="",
-#         nargs="?",
-#         help="resume from logdir or checkpoint in logdir",
-#     )
-#     parser.add_argument(
-#         "-b",
-#         "--base",
-#         nargs="*",
-#         metavar="base_config.yaml",
-#         help="paths to base configs. Loaded from left-to-right. "
-#              "Parameters can be overwritten or added with command-line options of the form `--key value`.",
-#         default=list(),
-#     )
-#     parser.add_argument(
-#         "-t",
-#         "--train",
-#         type=str2bool,
-#         const=True,
-#         default=True,
-#         nargs="?",
-#         help="train",
-#     )
-#     parser.add_argument(
-#         "--no-test",
-#         type=str2bool,
-#         const=True,
-#         default=False,
-#         nargs="?",
-#         help="disable test",
-#     )
-#     parser.add_argument(
-#         "-p",
-#         "--project",
-#         help="name of new or path to existing project"
-#     )
-#     parser.add_argument(
-#         "-d",
-#         "--debug",
-#         type=str2bool,
-#         nargs="?",
-#         const=True,
-#         default=False,
-#         help="enable post-mortem debugging",
-#     )
-#     parser.add_argument(
-#         "-s",
-#         "--seed",
-#         type=int,
-#         default=23,
-#         help="seed for seed_everything",
-#     )
-#     parser.add_argument(
-#         "-f",
-#         "--postfix",
-#         type=str,
-#         default="",
-#         help="post-postfix for default name",
-#     )
-#     parser.add_argument(
-#         "-l",
-#         "--logdir",
-#         type=str,
-#         default="logs",
-#         help="directory for logging dat shit",
-#     )
-#     parser.add_argument(
-#         "--scale_lr",
-#         type=str2bool,
-#         nargs="?",
-#         const=True,
-#         default=True,
-#         help="scale base-lr by ngpu * batch_size * n_accumulate",
-#     )
-#     return parser
-#
-#
-# def nondefault_trainer_args(opt):
-#     parser = argparse.ArgumentParser()
-#     parser = Trainer.add_argparse_args(parser)
-#     args = parser.parse_args([])
-#     return sorted(k for k in vars(args) if getattr(opt, k) != getattr(args, k))
-#
-#
-#
-#
-# now = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-#
-# # add cwd for convenience and to make classes in this file available when
-# # running as `python main.py`
-# # (in particular `main.DataModuleFromConfig`)
-# sys.path.append(os.getcwd())
-#
-# parser = get_parser()
-# parser = Trainer.add_argparse_args(parser)
-#
-# opt, unknown = parser.parse_known_args()
-# if opt.name and opt.resume:
-#     raise ValueError(
-#         "-n/--name and -r/--resume cannot be specified both."
-#         "If you want to resume training in a new log folder, "
-#         "use -n/--name in combination with --resume_from_checkpoint"
-#     )
-# if opt.resume:
-#     if not os.path.exists(opt.resume):
-#         raise ValueError("Cannot find {}".format(opt.resume))
-#     if os.path.isfile(opt.resume):
-#         paths = opt.resume.split("/")
-#         # idx = len(paths)-paths[::-1].index("logs")+1
-#         # logdir = "/".join(paths[:idx])
-#         logdir = "/".join(paths[:-2])
-#         ckpt = opt.resume
-#     else:
-#         assert os.path.isdir(opt.resume), opt.resume
-#         logdir = opt.resume.rstrip("/")
-#         ckpt = os.path.join(logdir, "checkpoints", "last.ckpt")
-#
-#     opt.resume_from_checkpoint = ckpt
-#     base_configs = sorted(glob.glob(os.path.join(logdir, "configs/*.yaml")))
-#     opt.base = base_configs + opt.base
-#     _tmp = logdir.split("/")
-#     nowname = _tmp[-1]
-# else:
-#     if opt.name:
-#         name = "_" + opt.name
-#     elif opt.base:
-#         cfg_fname = os.path.split(opt.base[0])[-1]
-#         cfg_name = os.path.splitext(cfg_fname)[0]
-#         name = "_" + cfg_name
-#     else:
-#         name = ""
-#     nowname = now + name + opt.postfix
-#     logdir = os.path.join(opt.logdir, nowname)
-#
-# ckptdir = os.path.join(logdir, "checkpoints")
-# cfgdir = os.path.join(logdir, "configs")
-# seed_everything(opt.seed)
-#
-# configs = [OmegaConf.load(cfg) for cfg in opt.base]
-# cli = OmegaConf.from_dotlist(unknown)
-# config = OmegaConf.merge(*configs, cli)
-# lightning_config = config.pop("lightning", OmegaConf.create())
-# # merge trainer cli with config
-# trainer_config = lightning_config.get("trainer", OmegaConf.create())
-# # default to ddp
-# trainer_config["accelerator"] = "ddp"
-# for k in nondefault_trainer_args(opt):
-#     trainer_config[k] = getattr(opt, k)
-# if not "gpus" in trainer_config:
-#     del trainer_config["accelerator"]
-#     cpu = True
-# else:
-#     gpuinfo = trainer_config["gpus"]
-#     print(f"Running on GPUs {gpuinfo}")
-#     cpu = False
-# trainer_opt = argparse.Namespace(**trainer_config)
-# lightning_config.trainer = trainer_config
-#
-# # model
-# # model = instantiate_from_config(config.model)
-#
-# trainer_kwargs = dict()
-#
-# # data
-# data = instantiate_from_config(config.data)
-# # NOTE according to https://pytorch-lightning.readthedocs.io/en/latest/datamodules.html
-# # calling these ourselves should not be necessary but it is.
-# # lightning still takes care of proper multiprocessing though
-#
-# data.prepare_data()
-# data.setup()
-# print("#### Data #####")
-# for k in data.datasets:
-#     print(f"{k}, {data.datasets[k].__class__.__name__}, {len(data.datasets[k])}")
-#
-# trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
-# # print('Now is training')
-# # trainer.fit(model, data)
 
 from torch.utils.data import DataLoader, Dataset
 from ldm.data.ww_dataset import my_dataset
 from ldm.models.autoencoder import AutoencoderKL
 
+from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict, kaggle_dataset_dict, kaggle_autoencoder_ckpt_dict
+
+cwd = os.getcwd()
+
+if 'my_phd' in cwd:
+    print(f'Run on local -- {cwd}')
+    dataset_dict = local_dataset_dict
+    autoencoder_ckpt_dict = local_autoencoder_ckpt_dict
+elif 'veracruz' in cwd:
+    print(f'Run on LCA -- {cwd}')
+    dataset_dict = lca_dataset_dict
+    autoencoder_ckpt_dict = lca_autoencoder_ckpt_dict
+elif 'kaggle' in cwd:
+    print(f'Run on kaggle -- {cwd}')
+    dataset_dict = kaggle_dataset_dict
+    autoencoder_ckpt_dict = kaggle_autoencoder_ckpt_dict
+else:
+    raise Exception('运行平台未知，需配置路径!')
 
 ds_name = 'D3'
 txt_name = 'val.txt'
 
-autoencoder_ckpt = r'/kaggle/input/stage5-weights-ldm-d3/D3_epo49_01236.ckpt'
-ds_dir = r'/kaggle/input/stage4-d3-ecpnight-7augs'
+autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
+ds_dir = dataset_dict[ds_name]
 
 latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
 
@@ -287,17 +102,18 @@ saved_tensor = None
 
 from tqdm import tqdm
 
-for idx, image_dict in enumerate(tqdm(augTrain_loader)):
-    image = image_dict['image']
-    image = image.to('cuda')
-    latent_space = model.encoder(image).detach()
+with torch.no_grad():
+    for idx, image_dict in enumerate(tqdm(augTrain_loader)):
+        image = image_dict['image']
+        image = image.to('cuda')
+        latent_space = model.encoder(image).detach()
 
-    if saved_tensor is None:
-        saved_tensor = latent_space
-    else:
-        saved_tensor = torch.cat((saved_tensor, latent_space), 0)
+        if saved_tensor is None:
+            saved_tensor = latent_space
+        else:
+            saved_tensor = torch.cat((saved_tensor, latent_space), 0)
 
-torch.save(saved_tensor, latent_name)
+    torch.save(saved_tensor, latent_name)
 
 print('读取保存的tensor')
 load_torch = torch.load(latent_name)
