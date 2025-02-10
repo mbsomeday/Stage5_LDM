@@ -1,28 +1,6 @@
-import argparse, os, sys, datetime, glob, importlib, csv
-import numpy as np
-import time
+import argparse, os
+from tqdm import tqdm
 import torch
-import torchvision
-import pytorch_lightning as pl
-
-from packaging import version
-from omegaconf import OmegaConf
-from torch.utils.data import random_split, DataLoader, Dataset, Subset
-from functools import partial
-from PIL import Image
-
-from pytorch_lightning import seed_everything
-from pytorch_lightning.trainer import Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
-from pytorch_lightning.utilities.distributed import rank_zero_only
-from pytorch_lightning.utilities import rank_zero_info
-
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-
-from ldm.data.base import Txt2ImgIterableBaseDataset
-from ldm.util import instantiate_from_config
-
-
 
 from torch.utils.data import DataLoader, Dataset
 from ldm.data.ww_dataset import my_dataset
@@ -30,6 +8,7 @@ from ldm.models.autoencoder import AutoencoderKL
 
 from paths_dict import lca_dataset_dict, lca_autoencoder_ckpt_dict, local_dataset_dict, local_autoencoder_ckpt_dict, kaggle_dataset_dict, kaggle_autoencoder_ckpt_dict
 
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 cwd = os.getcwd()
 
 if 'my_phd' in cwd:
@@ -47,77 +26,98 @@ elif 'kaggle' in cwd:
 else:
     raise Exception('运行平台未知，需配置路径!')
 
-ds_name = 'D3'
-txt_name = 'val.txt'
+def get_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--ds_name', type=str)
+    parser.add_argument('--batch_size', type=int, default=32)
+    args = parser.parse_args()
+    return args
 
-autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
-ds_dir = dataset_dict[ds_name]
+args = get_parser()
+ds_name = args.ds_name
+batch_size = args.batch_size
 
-latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
+txt_list = ['augmentation_train.txt', 'val.txt', 'test.txt']
 
-# '/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs/dataset_txt/augmentation_train.txt'
-
-ddconfig = {
-    'double_z': True,
-    'z_channels': 4,
-    'resolution': 256,
-    'in_channels': 3,
-    'out_ch': 3,
-    'ch': 128,
-    'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
-    'num_res_blocks': 2,
-    'attn_resolutions': [],
-    'dropout': 0.0
-}
-
-lossconfig = {
-    'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
-    'params' : {
-        'disc_start': 50001,
-        'kl_weight': 0.000001,
-        'disc_weight': 0.5,
+def get_model(autoencoder_ckpt):
+    ddconfig = {
+        'double_z': True,
+        'z_channels': 4,
+        'resolution': 256,
+        'in_channels': 3,
+        'out_ch': 3,
+        'ch': 128,
+        'ch_mult': [1, 2, 4, 4],  # num_down = len(ch_mult)-1
+        'num_res_blocks': 2,
+        'attn_resolutions': [],
+        'dropout': 0.0
     }
-}
-model = AutoencoderKL(ddconfig=ddconfig,
-                      lossconfig=lossconfig,
-                      embed_dim=4,
-                      ckpt_path=autoencoder_ckpt
-                      )
-model.eval()
-model = model.to('cuda')
-for param in model.parameters():
-    param.requires_grad = False
 
-augTrain_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
-augTrain_loader = DataLoader(augTrain_data, batch_size=32)
+    lossconfig = {
+        'target': 'ldm.modules.losses.LPIPSWithDiscriminator',
+        'params': {
+            'disc_start': 50001,
+            'kl_weight': 0.000001,
+            'disc_weight': 0.5,
+        }
+    }
 
-print('Information:')
-print('autoencoder_ckpt:',autoencoder_ckpt)
-print('ds_dir:', ds_dir)
-print('ds_name:', ds_name)
-print('latent_name:', latent_name)
-print('txt_name:', txt_name)
+    model = AutoencoderKL(ddconfig=ddconfig,
+                          lossconfig=lossconfig,
+                          embed_dim=4,
+                          ckpt_path=autoencoder_ckpt
+                          )
+    model.eval()
+    model = model.to('cuda')
+    for param in model.parameters():
+        param.requires_grad = False
 
-saved_tensor = None
+    return model
 
-from tqdm import tqdm
 
-with torch.no_grad():
-    for idx, image_dict in enumerate(tqdm(augTrain_loader)):
-        image = image_dict['image']
-        image = image.to('cuda')
-        latent_space = model.encoder(image).detach()
+def get_latentSpace(ds_name):
+    autoencoder_ckpt = autoencoder_ckpt_dict[ds_name]
+    ds_dir = dataset_dict[ds_name]
 
-        if saved_tensor is None:
-            saved_tensor = latent_space
-        else:
-            saved_tensor = torch.cat((saved_tensor, latent_space), 0)
 
-    torch.save(saved_tensor, latent_name)
+    model = get_model(autoencoder_ckpt)
 
-print('读取保存的tensor')
-load_torch = torch.load(latent_name)
-print(load_torch.size())
+    for txt_name in txt_list:
+        latent_name = str(ds_name) + '_' + str(txt_name[:-4]) + '_LatentSpace.pt'
+        latentspace_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
+        latentspace_loader = DataLoader(latentspace_data, batch_size=batch_size)
+
+        print('Information:')
+        print('autoencoder_ckpt:', autoencoder_ckpt)
+        print('ds_dir:', ds_dir)
+        print('ds_name:', ds_name)
+        print('save latent_name:', latent_name)
+        print('txt_name:', txt_name)
+
+        saved_tensor = None
+
+        with torch.no_grad():
+            for idx, image_dict in enumerate(tqdm(latentspace_loader)):
+                image = image_dict['image']
+                image = image.to(DEVICE)
+                latent_space = model.encoder(image).detach()
+
+                if saved_tensor is None:
+                    saved_tensor = latent_space
+                else:
+                    saved_tensor = torch.cat((saved_tensor, latent_space), 0)
+
+            torch.save(saved_tensor, latent_name)
+
+        # print('读取保存的tensor')
+        # load_torch = torch.load(latent_name)
+        # print(load_torch.size())
+
+
+
+
+
+
 
 
 
