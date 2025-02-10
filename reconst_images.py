@@ -104,6 +104,7 @@ if not os.path.exists(tensorDict_save_dir):
 
 rec_dict = {}
 print('Num of images:', len(cur_data))
+print('Num of batch:', len(cur_loader))
 print(fr'Reconstructed images will save to {tensorDict_save_dir}')
 print('*' * 60)
 
