@@ -28,13 +28,13 @@ else:
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ds_name', type=str)
+    # parser.add_argument('--ds_name', type=str)
     parser.add_argument('--batch_size', type=int, default=32)
     args = parser.parse_args()
     return args
 
 args = get_parser()
-ds_name = args.ds_name
+# ds_name = args.ds_name
 batch_size = args.batch_size
 
 txt_list = ['augmentation_train.txt', 'val.txt', 'test.txt']
@@ -114,8 +114,8 @@ def get_latentSpace(ds_name):
         # print(load_torch.size())
 
 
-
-get_latentSpace(ds_name)
+for ds_name in ['D1', 'D2', 'D3', 'D4']:
+    get_latentSpace(ds_name)
 
 
 
