@@ -87,12 +87,11 @@ def get_latentSpace(ds_name):
         latentspace_data = my_dataset(ds_dir=ds_dir, txt_name=txt_name)
         latentspace_loader = DataLoader(latentspace_data, batch_size=batch_size)
 
+        print('*' * 80)
         print('Information:')
         print('autoencoder_ckpt:', autoencoder_ckpt)
-        print('ds_dir:', ds_dir)
-        print('ds_name:', ds_name)
+        print(f'ds name: {ds_name} - ds dir: {ds_dir} - txt name: {txt_name}')
         print('save latent_name:', latent_name)
-        print('txt_name:', txt_name)
 
         saved_tensor = None
 
