@@ -55,9 +55,9 @@ AE_ds = args.AE_ds
 if AE_ds is not None and AE_ds != ds_name:
     AE_ckpt = autoencoder_ckpt_dict[AE_ds]
     print(f'当前是输入数据集与训练AE的数据集不一致的情况\n模型权重为:{AE_ckpt}')
-
-AE_ckpt = autoencoder_ckpt_dict[AE_ds]
-print(f'Auto Encoder的模型权重为:{AE_ckpt}')
+else:
+    AE_ckpt = autoencoder_ckpt_dict[ds_name]
+    print(f'Auto Encoder的模型权重为:{AE_ckpt}')
 
 ds_path = dataset_dict[ds_name]
 print(f'Input dataset: {ds_name} - txt: {txt_name} \nDataset Path:{ds_path}')
