@@ -27,8 +27,8 @@ local_autoencoder_ckpt_dict = {
 }
 
 kaggle_dataset_dict = {
-    'D1': r'/kaggle/input/stage4-d1-ecpdaytime-7augs/Stage4_D1_ECPDaytime_7Augs',
-    'D2': r'/kaggle/input/stage4-d2-citypersons-7augs/Stage4_D2_CityPersons_7Augs',
+    'D1': r'/kaggle/input/stage4-d1-ecpdaytime-7augs',
+    'D2': r'/kaggle/input/stage4-d2-citypersons-7augs',
     'D3': r'/kaggle/input/stage4-d3-ecpnight-7augs',
     'D4': r'/kaggle/input/stage4-d4-7augs'
 }
