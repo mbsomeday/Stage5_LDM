@@ -16,10 +16,10 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def parse_args():
     parse = argparse.ArgumentParser()
-    parse.add_argument('--ds_name', type=str)
+    parse.add_argument('--ds_name', type=str, help='Input dataset name')
     parse.add_argument('--txt_name', type=str)
     parse.add_argument('--batch_size', default=32, type=int)
-    parse.add_argument('--AE_ds', default=None, type=str)
+    parse.add_argument('--AE_ds', default=None, type=str, help='Dataset that used for training AE')
 
     args = parse.parse_args()
     return args
