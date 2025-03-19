@@ -70,11 +70,13 @@ class Att_Loss():
         print('flag 11111')
 
         w = F.adaptive_avg_pool2d(self.backward_features, 1)    # shape: (batch_size, 1280, 1, 1)
+        print(f'wwwww: {w.shape}')
         # print(f'w: {w.shape}')
         temp_w = w[0].unsqueeze(0)
         print('flag 222')
 
         temp_fl = self.feed_forward_features[0].unsqueeze(0)
+
         ac = F.conv2d(temp_fl, temp_w)
         print('flag 333')
 
