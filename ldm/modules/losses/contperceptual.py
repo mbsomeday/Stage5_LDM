@@ -37,14 +37,14 @@ class LPIPSWithDiscriminator(nn.Module):
         self.discriminator_weight = disc_weight
         self.disc_conditional = disc_conditional
 
-        ds_weights = r'D:\chrom_download\EfficientB0_dsCls-028-0.991572.pth'
+        # ds_weights = r'D:\chrom_download\EfficientB0_dsCls-028-0.991572.pth'
         self.ds_model = models.efficientnet_b0(weights='IMAGENET1K_V1', progress=True)
         new_classifier = torch.nn.Sequential(
             torch.nn.Dropout(p=0.2, inplace=True),
             torch.nn.Linear(in_features=1280, out_features=4)
         )
         self.ds_model.classifier = new_classifier
-        load_weights(self.ds_model, ds_weights)
+        # load_weights(self.ds_model, ds_weights)
 
     def calculate_adaptive_weight(self, nll_loss, g_loss, last_layer=None):
         if last_layer is not None:
