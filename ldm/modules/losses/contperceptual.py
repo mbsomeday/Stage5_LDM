@@ -116,6 +116,7 @@ class LPIPSWithDiscriminator(nn.Module):
         # 将attention map也用kl_weight作为权重
         masked_images = np.ones(shape=inputs.shape)
         for img_idx, image in enumerate(inputs):
+            image = torch.unsqueeze(image, dim=0)
             heatmap, mask, masked_image = self.calc_cam(self.ds_model, image)
             masked_images[img_idx] = masked_image
         masked_images = torch.tensor(masked_images)
