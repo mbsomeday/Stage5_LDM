@@ -160,6 +160,7 @@ class LPIPSWithDiscriminator(nn.Module):
             image = torch.unsqueeze(image, dim=0)
             print(f'image: {image.shape}')
             heatmap, mask, masked_image = self.attloss.calc_cam(image)
+            print('flag after mask computing')
             masked_images[img_idx] = masked_image
         masked_images = torch.tensor(masked_images)
 
