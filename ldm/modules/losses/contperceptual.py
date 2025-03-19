@@ -67,15 +67,21 @@ class Att_Loss():
         grad_yc.requires_grad = True
         print(f'grad_yc: {grad_yc} - {grad_yc.requires_grad}')
         grad_yc.backward()
+        print('flag 11111')
 
         w = F.adaptive_avg_pool2d(self.backward_features, 1)    # shape: (batch_size, 1280, 1, 1)
         # print(f'w: {w.shape}')
         temp_w = w[0].unsqueeze(0)
+        print('flag 222')
+
         temp_fl = self.feed_forward_features[0].unsqueeze(0)
         ac = F.conv2d(temp_fl, temp_w)
+        print('flag 333')
+
         ac = F.relu(ac)
 
         Ac = F.interpolate(ac, (224, 224))
+        print('flag 444')
 
         heatmap = Ac
 
@@ -88,7 +94,7 @@ class Att_Loss():
         mask.requires_grad = False
         mask[mask<Ac_max] = 0
         masked_image = x - x * mask
-        print()
+        print('flag 555')
 
         return heatmap, mask, masked_image
 
