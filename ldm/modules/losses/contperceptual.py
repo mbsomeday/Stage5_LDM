@@ -67,6 +67,7 @@ class Att_Loss(nn.Module):
         grad_yc.requires_grad = True
         print(f'grad_yc: {grad_yc} - {grad_yc.requires_grad}')
         grad_yc.backward()
+        print(f'backward features after backward: {self.backward_features.shape}')
         print('flag 11111')
 
         w = F.adaptive_avg_pool2d(self.backward_features, 1)    # shape: (batch_size, 1280, 1, 1)
@@ -103,7 +104,7 @@ class Att_Loss(nn.Module):
     def forward(self, x):
         print('forward of attenLoss!!')
         out = self.ds_model(x)
-        print(f'forward feature after forward: {self.feed_forward_features}')
+        print(f'forward feature after forward: {self.feed_forward_features.shape}')
         ds_cam, ds_mask, ds_masked_image = self.calc_cam(x)
         return ds_cam, ds_mask, ds_masked_image
 
