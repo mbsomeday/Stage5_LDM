@@ -12,7 +12,7 @@ def load_weights(model, weights):
     model.load_state_dict(ckpt['model_state_dict'])
     return model
 
-class Att_Loss():
+class Att_Loss(nn.Module):
     def __init__(self):
         super().__init__()
         # ds_weights = r'D:\chrom_download\EfficientB0_dsCls-028-0.991572.pth'
@@ -100,6 +100,11 @@ class Att_Loss():
 
         return heatmap, mask, masked_image
 
+    def forward(self, x):
+        out = self.ds_model(x)
+        ds_cam, ds_mask, ds_masked_image = self.calc_cam(x)
+        return ds_cam, ds_mask, ds_masked_image
+
 
 
 class LPIPSWithDiscriminator(nn.Module):
@@ -168,7 +173,7 @@ class LPIPSWithDiscriminator(nn.Module):
         for img_idx, image in enumerate(inputs):
             image = torch.unsqueeze(image, dim=0)
             print(f'image: {image.shape}')
-            heatmap, mask, masked_image = self.attloss.calc_cam(image)
+            heatmap, mask, masked_image = self.attloss(image)
             print('flag after mask computing')
             masked_images[img_idx] = masked_image
         masked_images = torch.tensor(masked_images)
