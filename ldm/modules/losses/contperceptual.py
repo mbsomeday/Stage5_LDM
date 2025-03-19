@@ -69,7 +69,7 @@ class LPIPSWithDiscriminator(nn.Module):
         model.zero_grad()
 
         grad_yc = logits[0, pred]
-        print(f'grad_yc: {grad_yc}')
+        print(f'grad_yc: {grad_yc} - {grad_yc.requires_grad}')
         grad_yc.backward()
 
         w = F.adaptive_avg_pool2d(self.backward_features, 1)    # shape: (batch_size, 1280, 1, 1)
