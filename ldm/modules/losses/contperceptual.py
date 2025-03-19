@@ -26,6 +26,7 @@ class Att_Loss(nn.Module):
 
         self.feed_forward_features = None
         self.backward_features = None
+        self.grad_layer = 'features'
 
         self._register_hooks(self.ds_model, grad_layer='features')
 
@@ -44,7 +45,7 @@ class Att_Loss(nn.Module):
             if idx == grad_layer:
                 m.register_forward_hook(forward_hook)
                 m.register_full_backward_hook(backward_hook)
-                print(f"Register forward hook and backward hook! Hooked layer: {self.grad_layer}")
+                print(f"Register forward hook and backward hook! Hooked layer: {grad_layer}")
                 gradient_layer_found = True
                 break
 
