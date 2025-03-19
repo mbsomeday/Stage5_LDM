@@ -12,31 +12,9 @@ def load_weights(model, weights):
     model.load_state_dict(ckpt['model_state_dict'])
     return model
 
-class LPIPSWithDiscriminator(nn.Module):
-    def __init__(self, disc_start, logvar_init=0.0, kl_weight=1.0, pixelloss_weight=1.0,
-                 disc_num_layers=3, disc_in_channels=3, disc_factor=1.0, disc_weight=1.0,
-                 perceptual_weight=1.0, use_actnorm=False, disc_conditional=False,
-                 disc_loss="hinge"):
-
+class Att_Loss(nn.Module):
+    def __init__(self):
         super().__init__()
-        assert disc_loss in ["hinge", "vanilla"]
-        self.kl_weight = kl_weight
-        self.pixel_weight = pixelloss_weight
-        self.perceptual_loss = LPIPS().eval()
-        self.perceptual_weight = perceptual_weight
-        # output log variance
-        self.logvar = nn.Parameter(torch.ones(size=()) * logvar_init)
-
-        self.discriminator = NLayerDiscriminator(input_nc=disc_in_channels,
-                                                 n_layers=disc_num_layers,
-                                                 use_actnorm=use_actnorm
-                                                 ).apply(weights_init)
-        self.discriminator_iter_start = disc_start
-        self.disc_loss = hinge_d_loss if disc_loss == "hinge" else vanilla_d_loss
-        self.disc_factor = disc_factor
-        self.discriminator_weight = disc_weight
-        self.disc_conditional = disc_conditional
-
         # ds_weights = r'D:\chrom_download\EfficientB0_dsCls-028-0.991572.pth'
         self.ds_model = models.efficientnet_b0(weights='IMAGENET1K_V1', progress=True)
         new_classifier = torch.nn.Sequential(
@@ -45,29 +23,43 @@ class LPIPSWithDiscriminator(nn.Module):
         )
         self.ds_model.classifier = new_classifier
         self.ds_model.eval()
-        # load_weights(self.ds_model, ds_weights)
 
-    def calculate_adaptive_weight(self, nll_loss, g_loss, last_layer=None):
-        if last_layer is not None:
-            nll_grads = torch.autograd.grad(nll_loss, last_layer, retain_graph=True)[0]
-            g_grads = torch.autograd.grad(g_loss, last_layer, retain_graph=True)[0]
-        else:
-            nll_grads = torch.autograd.grad(nll_loss, self.last_layer[0], retain_graph=True)[0]
-            g_grads = torch.autograd.grad(g_loss, self.last_layer[0], retain_graph=True)[0]
+        self.feed_forward_features = None
+        self.backward_features = None
 
-        d_weight = torch.norm(nll_grads) / (torch.norm(g_grads) + 1e-4)
-        d_weight = torch.clamp(d_weight, 0.0, 1e4).detach()
-        d_weight = d_weight * self.discriminator_weight
-        return d_weight
+        self._register_hooks(self.ds_model, grad_layer='features')
 
-    def calc_cam(self, model, x):
+    def _register_hooks(self, model, grad_layer):
+        '''
+            注册钩子函数
+        '''
+        def forward_hook(module, grad_input, grad_output):
+            self.feed_forward_features = grad_output
+
+        def backward_hook(module, grad_input, grad_output):
+            self.backward_features = grad_output[0]
+
+        gradient_layer_found = False
+        for idx, m in model.named_modules():
+            if idx == grad_layer:
+                m.register_forward_hook(forward_hook)
+                m.register_full_backward_hook(backward_hook)
+                print(f"Register forward hook and backward hook! Hooked layer: {self.grad_layer}")
+                gradient_layer_found = True
+                break
+
+        # for our own sanity, confirm its existence
+        if not gradient_layer_found:
+            raise AttributeError('Gradient layer %s not found in the internal model' % grad_layer)
+
+    def calc_cam(self, x=None):
         '''
             x是单张image
         '''
-        logits = model(x)
+        logits = self.ds_model(x)
         pred = torch.argmax(logits, dim=1)
 
-        model.zero_grad()
+        self.ds_model.zero_grad()
 
         grad_yc = logits[0, pred]
         grad_yc.requires_grad = True
@@ -98,6 +90,50 @@ class LPIPSWithDiscriminator(nn.Module):
         return heatmap, mask, masked_image
 
 
+class LPIPSWithDiscriminator(nn.Module):
+    def __init__(self, disc_start, logvar_init=0.0, kl_weight=1.0, pixelloss_weight=1.0,
+                 disc_num_layers=3, disc_in_channels=3, disc_factor=1.0, disc_weight=1.0,
+                 perceptual_weight=1.0, use_actnorm=False, disc_conditional=False,
+                 disc_loss="hinge"):
+
+        super().__init__()
+        assert disc_loss in ["hinge", "vanilla"]
+        self.kl_weight = kl_weight
+        self.pixel_weight = pixelloss_weight
+        self.perceptual_loss = LPIPS().eval()
+        self.perceptual_weight = perceptual_weight
+        # output log variance
+        self.logvar = nn.Parameter(torch.ones(size=()) * logvar_init)
+
+        self.discriminator = NLayerDiscriminator(input_nc=disc_in_channels,
+                                                 n_layers=disc_num_layers,
+                                                 use_actnorm=use_actnorm
+                                                 ).apply(weights_init)
+        self.discriminator_iter_start = disc_start
+        self.disc_loss = hinge_d_loss if disc_loss == "hinge" else vanilla_d_loss
+        self.disc_factor = disc_factor
+        self.discriminator_weight = disc_weight
+        self.disc_conditional = disc_conditional
+
+        # ds model attention mao的损失函数
+        self.attloss = Att_Loss()
+
+
+    def calculate_adaptive_weight(self, nll_loss, g_loss, last_layer=None):
+        if last_layer is not None:
+            nll_grads = torch.autograd.grad(nll_loss, last_layer, retain_graph=True)[0]
+            g_grads = torch.autograd.grad(g_loss, last_layer, retain_graph=True)[0]
+        else:
+            nll_grads = torch.autograd.grad(nll_loss, self.last_layer[0], retain_graph=True)[0]
+            g_grads = torch.autograd.grad(g_loss, self.last_layer[0], retain_graph=True)[0]
+
+        d_weight = torch.norm(nll_grads) / (torch.norm(g_grads) + 1e-4)
+        d_weight = torch.clamp(d_weight, 0.0, 1e4).detach()
+        d_weight = d_weight * self.discriminator_weight
+        return d_weight
+
+
+
     def forward(self, inputs, reconstructions, posteriors, optimizer_idx,
                 global_step, last_layer=None, cond=None, split="train",
                 weights=None):
@@ -120,7 +156,7 @@ class LPIPSWithDiscriminator(nn.Module):
         for img_idx, image in enumerate(inputs):
             image = torch.unsqueeze(image, dim=0)
             print(f'image: {image.shape}')
-            heatmap, mask, masked_image = self.calc_cam(self.ds_model, image)
+            heatmap, mask, masked_image = self.attloss(image)
             masked_images[img_idx] = masked_image
         masked_images = torch.tensor(masked_images)
 
