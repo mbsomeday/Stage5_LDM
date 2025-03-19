@@ -23,6 +23,7 @@ class Att_Loss():
         )
         self.ds_model.classifier = new_classifier
         self.ds_model.eval()
+        self.ds_model.to(DEVICE)
 
         self.feed_forward_features = None
         self.backward_features = None
