@@ -12,7 +12,7 @@ def load_weights(model, weights):
     model.load_state_dict(ckpt['model_state_dict'])
     return model
 
-class Att_Loss(nn.Module):
+class Att_Loss():
     def __init__(self):
         super().__init__()
         # ds_weights = r'D:\chrom_download\EfficientB0_dsCls-028-0.991572.pth'
@@ -91,8 +91,6 @@ class Att_Loss(nn.Module):
 
         return heatmap, mask, masked_image
 
-    def forward(self, x):
-        return self.calc_cam(x)
 
 
 class LPIPSWithDiscriminator(nn.Module):
