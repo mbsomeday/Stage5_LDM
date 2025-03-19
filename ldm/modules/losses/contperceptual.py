@@ -125,7 +125,9 @@ class LPIPSWithDiscriminator(nn.Module):
             # generator update
             if cond is None:
                 assert not self.disc_conditional
-                logits_fake = self.discriminator(reconstructions.contiguous()) + self.discriminator(masked_images)
+                # logits_fake = self.discriminator(reconstructions.contiguous()) + self.discriminator(masked_images)
+                logits_fake = self.discriminator(reconstructions.contiguous())
+
             else:
                 assert self.disc_conditional
                 logits_fake = self.discriminator(torch.cat((reconstructions.contiguous(), cond), dim=1))
