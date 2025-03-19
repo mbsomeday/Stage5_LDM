@@ -90,6 +90,9 @@ class Att_Loss(nn.Module):
 
         return heatmap, mask, masked_image
 
+    def forward(self, x):
+        pass
+
 
 class LPIPSWithDiscriminator(nn.Module):
     def __init__(self, disc_start, logvar_init=0.0, kl_weight=1.0, pixelloss_weight=1.0,
