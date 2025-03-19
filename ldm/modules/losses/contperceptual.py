@@ -53,7 +53,7 @@ class Att_Loss(nn.Module):
         if not gradient_layer_found:
             raise AttributeError('Gradient layer %s not found in the internal model' % grad_layer)
 
-    def calc_cam(self, x=None):
+    def calc_cam(self, x):
         '''
             x是单张image
         '''
@@ -87,11 +87,12 @@ class Att_Loss(nn.Module):
         mask.requires_grad = False
         mask[mask<Ac_max] = 0
         masked_image = x - x * mask
+        print()
 
         return heatmap, mask, masked_image
 
     def forward(self, x):
-        pass
+        return self.calc_cam(x)
 
 
 class LPIPSWithDiscriminator(nn.Module):
