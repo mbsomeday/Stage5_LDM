@@ -101,7 +101,9 @@ class Att_Loss(nn.Module):
         return heatmap, mask, masked_image
 
     def forward(self, x):
+        print('forward of attenLoss!!')
         out = self.ds_model(x)
+        print(f'forward feature after forward: {self.feed_forward_features}')
         ds_cam, ds_mask, ds_masked_image = self.calc_cam(x)
         return ds_cam, ds_mask, ds_masked_image
 
