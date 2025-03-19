@@ -44,6 +44,7 @@ class LPIPSWithDiscriminator(nn.Module):
             torch.nn.Linear(in_features=1280, out_features=4)
         )
         self.ds_model.classifier = new_classifier
+        self.ds_model.eval()
         # load_weights(self.ds_model, ds_weights)
 
     def calculate_adaptive_weight(self, nll_loss, g_loss, last_layer=None):
@@ -69,6 +70,7 @@ class LPIPSWithDiscriminator(nn.Module):
         model.zero_grad()
 
         grad_yc = logits[0, pred]
+        grad_yc.requires_grad = True
         print(f'grad_yc: {grad_yc} - {grad_yc.requires_grad}')
         grad_yc.backward()
 
